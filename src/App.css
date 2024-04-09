@@ -1,0 +1,31 @@
+html, body{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form{
+  background-image: url("login-background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.sidenav {
+  z-index: 9999;
+  background-color: #000;
+  position: fixed;
+  width: 60vw;
+  top: 0;
+  height: 100%;
+  transform: translateX(-100%);
+  transition: 0.25s ease-in-out;
+
+  display: flex;
+  flex-direction: column;
+
+
+}
+
+.sidenav.sidenav-open {
+  transform: translateX(0%);
+}
