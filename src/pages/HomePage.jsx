@@ -1,6 +1,10 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 // import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import api from "@/components/services/Api";
+import UsernameAvatarFallout from "@/components/services/Utils";
 
 // import { fetchGroups } from "../services/api.jsx";
 
@@ -11,88 +15,85 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 // import GroupCard from "../components/GroupCard";
 
 import Navbar from "@/components/Navbar";
+import Loader from "@/components/Loader";
 
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
-import { Lock, LockOpen, Menu, Clock, Users, X, Settings, LogOut } from "lucide-react";
+import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X } from "lucide-react";
 
 // import Backdrop from "../components/Backdrop.jsx";
 // import Loader from "../components/Loader.jsx";
 
-// import logo from "../assets/logo.png";
-// import placeholderProfileImg from "../assets/ppl.jpg";
-// import "../styles/home.scss";
-// import "../styles/search.scss";
-// import { compile } from "sass";
-
 import "../App.css";
+import squadLogo from "/squad-logo-white.png";
 
 import { Button } from "@/components/ui/button";
 
 const Home = () => {
-  const [sidenavOpen, setSidenavOpen] = useState(false); // toggle sidenav
-  const [searchQuery, setSerachQuery] = useState(""); // update the search query
-  const [showSearch, setSearchNav] = useState(false); // toggle search navbar
-  const [user, setUser] = useState([]);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSerachQuery] = useState("");
+
   const [page, setPage] = useState(1);
   const [selectedTags, setSelectedTags] = useState([]);
 
-  // const timeoutRef = useRef(null);
-  // const searchInputRef = useRef();
+  const timeoutRef = useRef(null);
+  const searchInputRef = useRef();
 
-  // const [groups, setGroups] = useState([]); // fetch groups for the feed
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
+  const [groups, setGroups] = useState([]); // fetch groups for the feed
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // const tags = ["cursada", "parcial", "final", "online", "presencial", "hibrido", "otro"];
+  const navigate = useNavigate();
+  // const tags = ["cursada", "parcial", "final", "online", "presencial", "hibrido", "otro"];´
 
-  // useEffect(() => {
-  //   let controller = new AbortController();
-  //   setGroups([]);
-  //   setLoading(true);
+  useEffect(() => {
+    // let controller = new AbortController();
 
-  //   const getGroups = async () => {
-  //     try {
-  //       setSerachQuery(showSearch ? searchQuery : ""); // only search if search is open
-  //       const groupsData = await fetchGroups(searchQuery, selectedTags, page, controller);
-  //       setGroups(groupsData.data);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.log("Error fetching groups:", error.message);
-  //     }
-  //   };
+    setGroups([]);
+    setLoading(true);
 
-  //   // if search query, debounce 600ms to avoid api abuse
-  //   if (searchQuery) {
-  //     if (timeoutRef.current) {
-  //       clearTimeout(timeoutRef.current);
-  //     }
-  //     timeoutRef.current = setTimeout(getGroups, 600);
-  //   } else {
-  //     getGroups();
-  //   }
+    const fetchGroups = async () => {
+      try {
+        const searchQ = searchQuery != "" ? "&search=" + searchQuery : "";
+        const pageN = page > 1 ? "&page=" + page : "";
 
-  //   return () => {
-  //     controller.abort();
-  //     if (timeoutRef.current) {
-  //       clearTimeout(timeoutRef.current);
-  //     }
-  //   };
-  // }, [searchQuery, showSearch, page, selectedTags]);
+        const response = await api.get(`/groups?${searchQ}${pageN}`);
+        if (response.status === 200) {
+          setGroups(response.data.data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log("Error fetching groups:", error.message);
+      }
+    };
 
-  // useEffect(() => {
-  //   if (showSearch) {
-  //     searchInputRef.current.focus(); // focus on search input on show
-  //   }
+    // if search query, debounce 600ms to avoid api abuse
+    if (searchQuery) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(fetchGroups, 600);
+    } else {
+      fetchGroups();
+    }
 
-  // }, [showSearch]);
+    return () => {
+      // controller.abort();
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [searchQuery, showSearch, page]);
 
-  // // ==== load user data ==== //
-  // // useEffect(() => {
-  // //   setUser(JSON.parse(localStorage.getItem("userdata")));
-  // // }, []);
+  useEffect(() => {
+    if (showSearch) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearch]);
 
   // const handleTagClick = (value) => {
   //   if (selectedTags.includes(value)) {
@@ -115,67 +116,119 @@ const Home = () => {
   //   };
   // }, []);
 
+  const handleGroupClick = (groupId) => {
+    navigate(`/group/${groupId}`);
+  };
+
+  const handleCreateGroup = () => {
+    navigate(`/create`);
+  };
+
+  const handleLogout = async () =>{
+    try {
+      const response = await api.get('/logout');
+      if (response.status === 200) {
+        // setRefresh(!refresh);
+        localStorage.clear('token');
+        sessionStorage.clear('token');
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
   return (
     <>
       <Navbar>
-        <button className="bg-transparent" onClick={(e) => setSidenavOpen(!sidenavOpen)}><Menu></Menu></button>
-        <img src="squad-logo-white.png" className="h-full"></img>
-        <Menu color="transparent"></Menu>
+        {!showSearch ? (
+          <>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Menu size="32" strokeWidth="2" />
+              </SheetTrigger>
+              <SheetContent side="left" className="flex flex-col justify-between bg-black border-stone-900 text-white">
+                <SheetHeader className="mt-12">
+                  <div className="flex flex-row gap-4 items-center mb-12">
+                    <Avatar>
+                      {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
+                      <AvatarFallback>AB</AvatarFallback>
+                    </Avatar>
+                    <label className="text-white text-medium text-base text-wrap">[user.name] [user.surname]</label>
+                  </div>
+
+                  <div className="flex flex-col gap-8">
+                    <button className="flex flex-row justify-start text-xl outline-none bg-transparent active:text-stone-500">
+                      <UserRound className="w-6 mr-2" />
+                      Pefil
+                    </button>
+                    <button className="flex flex-row justify-start text-xl outline-none bg-transparent active:text-stone-500">
+                      <Settings className="w-6 mr-2" />
+                      Opciones
+                    </button>
+                    <button className="flex flex-row text-xl bg-gradient rounded-md py-2 items-center justify-center active:brightness-75" onClick={handleCreateGroup}>
+                      <Plus className="w-6 mr-2" />
+                      Nuevo grupo
+                    </button>
+                  </div>
+                </SheetHeader>
+
+                <SheetFooter>
+                  <button className="flex flex-row justify-start text-xl outline-none bg-transparent active:text-stone-500" onClick={handleLogout}>
+                    <LogOut className="w-6 mr-2" />
+                    Cerrar sesion
+                  </button>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+            <img src={squadLogo} className="h-full" />
+            <Search className="active:brightness-50" size="32" strokeWidth="2" onClick={() => setShowSearch(true)} />
+          </>
+        ) : (
+          <div className="flex flex-row w-full items-center justify-between gap-3">
+            <div className="flex flex-row items-center w-96 px-3 py-2 rounded-full bg-stone-800">
+              <Search />
+              <input className="ml-2 bg-transparent text-white outline-none" ref={searchInputRef} value={searchQuery} onChange={(e) => setSerachQuery(e.target.value)} />
+            </div>
+            <X size="32" onClick={() => setShowSearch(false)} />
+          </div>
+        )}
       </Navbar>
 
-      <div className={`sidenav ${sidenavOpen ? "sidenav-open" : null}`}>
-        <div className="flex flex-row justify-end w-full pt-6 pr-3">
-          <Button className="bg-transparent" onClick={(e) => setSidenavOpen(!sidenavOpen)}>
-            <X size="32" strokeWidth="3"/>
-          </Button>
-        </div>
-
-        <div className="flex flex-col justify-between py-4 px-4 h-full">
-          <div className="flex flex-col gap-10">
-            <div className="flex flex-row gap-4 items-center mb-4">
-              <Avatar>
-                {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-                <AvatarFallback>SA</AvatarFallback>
-              </Avatar>
-              <label className="text-white text-medium text-lg">username</label>
-            </div>
-            <Button className="justify-start text-xl bg-transparent m-0 p-0 ">
-              <Settings className="w-6 mr-2" />
-              Options
-            </Button>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <Button className="justify-start text-xl bg-transparent m-0 p-0">
-              <LogOut className="w-6 mr-2" />
-              Log out
-            </Button>
-          </div>
-        </div>
-      </div>
+      {loading ? <Loader /> : null}
 
       <div className="h-full flex flex-col p-4 gap-4">
-        {[...Array(10)].map((e, i) => (
-          <Card key={i} className="w-full shadow-md bg-stone-50">
+        {groups.map((group, idx) => (
+          <Card key={group.ulid} onClick={(e) => handleGroupClick(group.ulid)} className="w-full shadow-md bg-stone-50 active:brightness-95">
             <CardHeader className="flex flex-row gap-2">
               <Avatar>
                 <AvatarImage src="" alt="profile" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col mt-0">
-                <Label className="text-sm">Santiago Nicolas del Corazon</Label>
-                <Label className="text-stone-400 text-xs font-normal">EXACTAS / Ing. Sistemas</Label>
+                <Label className="text-sm">
+                  {group.owner.name} {group.owner.surname}
+                </Label>
+                <Label className="text-stone-400 text-xs font-normal">
+                  {group.facultad} / {group.carrera}
+                </Label>
               </div>
             </CardHeader>
-            <CardContent>lore ipsum dolor amet lore ipsum dolor amet lore ipsum dolor amet lore ipsum dolor amet lore ipsum dolor amet lore ipsum dolor amet </CardContent>
+            <CardContent className="flex flex-col gap-2 ">
+              <Label className="text-base">{group.title}</Label>
+              <p className="text-sm">{group.description}</p>
+            </CardContent>
             <CardFooter className="flex flex-row justify-between gap-2">
-              <div className="flex flex-row items-center bg-gradient rounded-lg py-1.5 px-2.5 text-stone-100 gap-1.5 shadow-sm">
-                <Lock size="18" strokeWidth="2" color="white"></Lock>
-                <Label className="text-normal font-medium">Grupo cerrado</Label>
+              <div className="flex flex-row items-center bg-gradient rounded-lg py-1.5 px-2.5 text-stone-100 gap-1.5 shadow-sm min-w-32 justify-center">
+                {group.privacy == "open" ? <LockOpen size="18" strokeWidth="2" color="white"></LockOpen> : <Lock size="18" strokeWidth="2" color="white"></Lock>}
+                <Label className="text-normal font-medium">Grupo {group.privacy == "open" ? "abierto" : "cerrado"}</Label>
               </div>
-              <div className="flex flex-row items-center bg-gradient rounded-lg py-1.5 px-2.5 text-stone-100 gap-1.5 shadow-sm">
+              <div className="flex flex-row items-center bg-gradient rounded-lg py-1.5 px-2.5 text-stone-100 gap-1.5 shadow-sm min-w-16 justify-center">
                 <Users size="18" strokeWidth="2" color="white"></Users>
-                <Label className="text-normal font-medium">3/4</Label>
+                <Label className="text-normal font-medium">
+                  {group.membersCount}
+                  {group.maxMembers != null ? `/` + group.maxMembers : ""}
+                </Label>
               </div>
             </CardFooter>
           </Card>

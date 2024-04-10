@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-import { fetchFacultades, createGroup } from "../services/api";
+import api from "@/components/services/Api";
 
-import ProtectedRoute from "../services/ProtectedRoute";
-import Navbar from "../components/Navbar";
-import Tag from "../components/Tag";
-import Backdrop from "../components/Backdrop";
-import Loader from "../components/Loader";
+import Navbar from "@/components/Navbar";
+import Loader from "@/components/Loader";
 
-import logo from "../assets/logo.png";
-import "../styles/forms.scss";
-import "../styles/createGroup.scss";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+// import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+
+import { Square, Lock, LockOpen, ChevronLeft, Plus } from "lucide-react";
+
+import squadLogo from "/squad-logo-white.png";
 
 const CreateGroup = () => {
   const [groupData, setGroupData] = useState({
@@ -24,30 +29,30 @@ const CreateGroup = () => {
   });
 
   const [facultades, setFacultades] = useState([]);
+  const [selectedFacultad, setSelectedFacultad] = useState(0);
   const [carreras, setCarreras] = useState([]);
-
-  // const [selectedFacultad, setSelectedFacultad] = useState(null);
-  const navigate = useNavigate();
-
+  const [memberLimitChecked, setMemberLimitChecked] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    let controller = new AbortController();
-
-    const getFacultades = async () => {
+    const fetchFacultades = async () => {
       try {
-        const response = await fetchFacultades(controller);
-        setFacultades(response);
-        setCarreras(response[0]["carreras"]);
+        const response = await api.get("/facultades");
 
-        setLoading(false);
+        console.log(response);
 
+        if (response.status === 200) {
+          setFacultades(response.data);
+          setCarreras(response.data[0]["carreras"]);
+          setLoading(false);
+        }
       } catch (error) {
-        // console.log(error);
+        console.error(error);
       }
     };
-
-    getFacultades();
+    fetchFacultades();
   }, []);
 
   const handleChange = (event) => {
@@ -55,145 +60,130 @@ const CreateGroup = () => {
     setGroupData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  /*
-   this is more straigthforwrad but can lead to race condition issues if one or more triggers 
-    access the setGroupData at the same time, so we use the one on the top. here doesn't matter but whatever bruh
-  */
-  // const handleChange1 = (event) => {
-  //   const { name, value } = event.target;
-  //   setGroupData({ ...groupData, [name]: value });
-  //   console.log(groupData);
+  // const handleTagChange = (newTags) => {
+  //   setGroupData((prevData) => ({
+  //     ...prevData,
+  //     tags: newTags,
+  //   }));
   // };
 
-  // not used temporarely until full tags are implemented :P
-  const handleTagChange = (newTags) => {
-    setGroupData((prevData) => ({
-      ...prevData,
-      tags: newTags,
-    }));
-  };
-
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const response = await createGroup(groupData);
-
-    // console.log(response);
-
-    if (!response.hasOwnProperty('error')) {
-      alert("debug: group created successfully!");
-      navigate("/groups/"+response.ulid);
-    } else {
-      alert("debug: group creation failed. (" + response.error.code + ")");
-    }
-
+    // e.preventDefault();
+    // const response = await createGroup(groupData);
+    // // console.log(response);
+    // if (!response.hasOwnProperty('error')) {
+    //   alert("debug: group created successfully!");
+    //   navigate("/groups/"+response.ulid);
+    // } else {
+    //   alert("debug: group creation failed. (" + response.error.code + ")");
+    // }
   };
 
   const handleSelectFacultad = (event) => {
-    const facultadKey = event.target.value; // key index in the api response obj
-    // const selected = facultades[facultadKey]
-    // setSelectedFacultad(selected);
-    setCarreras(facultades[facultadKey].carreras);
+
+      const facultadKey = event.target.value;
+      // setSelectedFacultad(facultadKey);
+      setCarreras(facultades[facultadKey]["carreras"]);
+
+    // console.log(event);
   };
 
   return (
     <>
-      <ProtectedRoute />
       <Navbar>
-        <div className="icon-btn void"></div>
-        <div className="navbar-logo">
-          <img src={logo} alt="SQUAD" />
-        </div>
-        <Link to="/" className="icon-btn">
-          <i className="fa-solid fa-xmark"></i>
+        <Link to="/" className="active:brightness-75">
+          <ChevronLeft size="32" />
         </Link>
+        <img src={squadLogo} className="h-full"></img>
+        <Square color="transparent" />
       </Navbar>
 
-      {loading ? <Loader /> : ""}
-
-      {facultades ? (
-        <div className="container">
-          <div className="header">
-            <h2>
-              <i className="fa-solid fa-user-group"></i> Crear nuevo grupo
-            </h2>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="w-full flex justify-center pt-5">
+            <Label className="text-xl">Nuevo grupo</Label>
           </div>
 
-          <form className="newGroupForm" onSubmit={handleSubmit}>
-            <div className="input-group">
-              <label className="input-title">
-                <i className="fa-solid fa-quote-left"></i> Titulo
-              </label>
-              <input type="text" name="title" value={groupData.title} onChange={handleChange} className="input-control" required></input>
+          <form className="flex flex-col gap-4 p-4">
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Titulo</Label>
+              <Input type="text" value={groupData.title} onChange={handleChange} required />
             </div>
 
-            <div className="input-group">
-              <label className="input-title">
-                <i className="fa-solid fa-building-columns"></i> Facultad
-              </label>
-              <select className="input-control" onChange={handleSelectFacultad}>
-                {facultades.map((value, key) => (
-                  <option key={key} value={key}>{value.name}</option>
-                ))}
-              </select>
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Facultad</Label>
+              <Select required>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="--" />
+                </SelectTrigger>
+                <SelectContent>
+                  {facultades.map((facultad, idx) => (
+                    <SelectItem key={idx} value={facultad.id}>
+                      {facultad.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="input-group">
-              <label className="input-title">
-                <i className="fa-solid fa-graduation-cap"></i> Carrera
-              </label>
-              <select name="idCarrera" value={groupData.idCarrera} onChange={handleChange} className="input-control">
-                {carreras.map((value) => (
-                  <option key={value.id} value={value.id}>{value.name}</option>
-                ))}
-              </select>
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Carrera</Label>
+              <Select value={groupData.idCarrera} onValueChange={handleChange} required>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="--" />
+                </SelectTrigger>
+                <SelectContent>
+                  {carreras.map((carrera) => (
+                    <SelectItem key={carrera.id} value={carrera.id}>
+                      {carrera.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="input-group">
-              <label className="input-title">
-                <i className="fa-solid fa-quote-left"></i> Descripcion
-              </label>
-              <textarea name="description" value={groupData.description} onChange={handleChange} className="input-control textarea" required></textarea>
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Descripcion</Label>
+              <Textarea value={groupData.description} onChange={handleChange} placeholder="busco grupo de estudio para..." required />
             </div>
 
-            <label className="input-title">
-              <i className="fa-solid fa-tag"></i> Tags
-            </label>
-
-            {/* removed temporarely */}
-            {/* <div className="tagSelection">
-            <Tag value="cursada" tags={groupData.tags} setTags={handleTagChange}>Cursada</Tag>
-            <Tag value="parcial" tags={groupData.tags} setTags={handleTagChange}>Parcial</Tag>
-            <Tag value="final" tags={groupData.tags} setTags={handleTagChange}>Final</Tag>
-            <Tag value="online" tags={groupData.tags} setTags={handleTagChange}>Online</Tag>
-            <Tag value="presencial" tags={groupData.tags} setTags={handleTagChange}>Presencial</Tag>
-            <Tag value="hibrido" tags={groupData.tags} setTags={handleTagChange}>Hibrido</Tag>
-          </div> */}
-
-            <div className="input-group">
-              <label className="input-title">
-                <i className="fa-solid fa-eye"></i> Privacidad
-              </label>
-              <select name="privacy" value={groupData.privacy} onChange={handleChange} className="input-control">
-                <option value="open">Abierto</option>
-                <option value="closed">Cerrado</option>
-                <option value="private">Privado</option>
-              </select>
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Privacidad</Label>
+              <Select required>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="--" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="open">Grupo abierto</SelectItem>
+                  <SelectItem value="closed">Grupo cerrado</SelectItem>
+                  {/* <SelectItem value="private">Grupo privado</SelectItem> */}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="input-group">
-              <label className="input-title">
-                <i className="fa-solid fa-user"></i> Limite de miembros
-              </label>
-              <input type="number" name="maxMembers" value={groupData.maxMembers} onChange={handleChange} className="input-control"></input>
+            <div className="flex items-center space-x-2">
+              <Switch checked={memberLimitChecked} onCheckedChange={setMemberLimitChecked} />
+              <Label>Limitar miembros</Label>
             </div>
 
-            <button className="btn" type="submit">
-              <i className="fa-regular fa-plus"></i> Crear nuevo grupo
-            </button>
+            {memberLimitChecked ? (
+              <div className="grid w-full items-center gap-1.5">
+                <Label>Limite</Label>
+                <Input type="number" placeholder="2" required />
+              </div>
+            ) : null}
+
+            <div className="w-full">
+              <Button className="w-full bg-gradient shadow" type="submit">
+                <Plus />
+                Crear
+              </Button>
+            </div>
           </form>
-        </div>
-      ) : null}
+        </>
+      )}
     </>
   );
 };
