@@ -1,18 +1,8 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import api from "@/components/services/Api";
-import UsernameAvatarFallout from "@/components/services/Utils";
-
-// import { fetchGroups } from "../services/api.jsx";
-
-// import ProtectedRoute from "../services/ProtectedRoute.jsx";
-// import Navbar from "../components/Navbar.jsx";
-// import Tag from "../components/Tag.jsx";
-// import Sidenav from "../components/Sidenav.jsx";
-// import GroupCard from "../components/GroupCard";
+import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Utils";
 
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
@@ -21,19 +11,15 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 
 import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X } from "lucide-react";
-
-// import Backdrop from "../components/Backdrop.jsx";
-// import Loader from "../components/Loader.jsx";
 
 import "../App.css";
 import squadLogo from "/squad-logo-white.png";
 
 import { Button } from "@/components/ui/button";
 
-const Home = () => {
+const Home = ({ currentuser }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSerachQuery] = useState("");
 
@@ -43,7 +29,7 @@ const Home = () => {
   const timeoutRef = useRef(null);
   const searchInputRef = useRef();
 
-  const [groups, setGroups] = useState([]); // fetch groups for the feed
+  const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -52,13 +38,12 @@ const Home = () => {
 
   useEffect(() => {
     // let controller = new AbortController();
-
     setGroups([]);
     setLoading(true);
 
     const fetchGroups = async () => {
       try {
-        const searchQ = searchQuery != "" ? "&search=" + searchQuery : "";
+        const searchQ = showSearch && searchQuery != "" ? "&search=" + searchQuery : "";
         const pageN = page > 1 ? "&page=" + page : "";
 
         const response = await api.get(`/groups?${searchQ}${pageN}`);
@@ -124,19 +109,19 @@ const Home = () => {
     navigate(`/create`);
   };
 
-  const handleLogout = async () =>{
+  const handleLogout = async () => {
     try {
-      const response = await api.get('/logout');
+      const response = await api.get("/logout");
       if (response.status === 200) {
         // setRefresh(!refresh);
-        localStorage.clear('token');
-        sessionStorage.clear('token');
+        localStorage.clear("token");
+        sessionStorage.clear("token");
         navigate("/login");
       }
     } catch (error) {
       console.error(error.message);
     }
-  }
+  };
 
   return (
     <>
@@ -151,10 +136,12 @@ const Home = () => {
                 <SheetHeader className="mt-12">
                   <div className="flex flex-row gap-4 items-center mb-12">
                     <Avatar>
-                      {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
-                      <AvatarFallback>AB</AvatarFallback>
+                      <AvatarImage src={currentuser.profileImg} />
+                      <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(currentuser.name, currentuser.surname)}</AvatarFallback>
                     </Avatar>
-                    <label className="text-white text-medium text-base text-wrap">[user.name] [user.surname]</label>
+                    <label className="text-white text-medium text-base text-wrap">
+                      {currentuser.name} {currentuser.surname}
+                    </label>
                   </div>
 
                   <div className="flex flex-col gap-8">
@@ -199,18 +186,22 @@ const Home = () => {
 
       <div className="h-full flex flex-col p-4 gap-4">
         {groups.map((group, idx) => (
-          <Card key={group.ulid} onClick={(e) => handleGroupClick(group.ulid)} className="w-full shadow-md bg-stone-50 active:brightness-95">
-            <CardHeader className="flex flex-row gap-2">
-              <Avatar>
-                <AvatarImage src="" alt="profile" />
-                <AvatarFallback>{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
+          <Card key={group.ulid} onClick={(e) => handleGroupClick(group.ulid)} className="w-full shadow bg-stone-100 active:brightness-95">
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Avatar className="w-12 h-12">
+                <AvatarImage src={group.owner.profileImg} alt="profile" />
+                <AvatarFallback className="bg-stone-200">{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col mt-0">
+              <div className="flex flex-col">
                 <Label className="text-sm">
                   {group.owner.name} {group.owner.surname}
                 </Label>
                 <Label className="text-stone-400 text-xs font-normal">
                   {group.facultad} / {group.carrera}
+                </Label>
+                <Label className="flex gap-1 items-center text-stone-400 text-xs font-normal">
+                  <Clock size="12" />
+                  {FormatTimeAgo(group.creationDate)}
                 </Label>
               </div>
             </CardHeader>

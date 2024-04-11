@@ -1,0 +1,22 @@
+{
+  "name": "SQUAD",
+  "short_name": "SQUAD",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "squad-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "squad-icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

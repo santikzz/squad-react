@@ -8,23 +8,23 @@ export default defineConfig({
   plugins: [react(),
   VitePWA({
     registerType: 'autoUpdate',
-    includeAssets: ['favicon.ico'],
+    includeAssets: ['/squad-react/dist/squad-logo-white.png'],
     manifest: {
       name: 'SQUAD',
       short_name: 'SQUAD',
       theme_color: '#000000',
       background_color: '#000000',
       display: 'standalone',
-      scope: '/',
-      start_url: '/',
+      scope: '/squad-react/dist/',
+      start_url: '/squad-react/dist/',
       icons: [
         {
-          src: 'squad-icon.png',
+          src: '/squad-react/dist/squad-icon.png',
           sizes: '512x512',
           type: 'image/png'
         },
         {
-          src: 'squad-icon-maskable.png',
+          src: '/squad-react/dist/squad-icon-maskable.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'maskable'

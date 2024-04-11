@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -7,30 +7,31 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 
 import LoginPage from "@/pages/LoginPage";
-import HomePage from "@/pages/HomePage";
 // import Register from "@/pages/Register";
+import HomePage from "@/pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 import GroupPage from "@/pages/GroupPage";
+import GroupChatPage from "./pages/GroupChatPage";
 import CreateGroupPage from "@/pages/CreateGroupPage";
 
 function App() {
-
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') != null);
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") != null);
+  const currentuser = JSON.parse(localStorage.getItem("userdata"));
 
   return (
     <Router>
       <Routes>
-
-        <Route path="/login" element={<LoginPage/>} />
+        <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn}/>} />
 
         <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/group/:groupId" element={<GroupPage />} />
+          <Route path="/" element={<HomePage currentuser={currentuser} />} />
+          <Route path="/group/:groupId" element={<GroupPage currentuser={currentuser} />} />
+          <Route path="/group/chat/:groupId" element={<GroupChatPage currentuser={currentuser} />} />
           <Route path="/create" element={<CreateGroupPage />} />
-
+          <Route path="/user/:userId" element={<ProfilePage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />
-
       </Routes>
     </Router>
   );

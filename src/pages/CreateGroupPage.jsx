@@ -6,9 +6,13 @@ import api from "@/components/services/Api";
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-// import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,6 +21,33 @@ import { Switch } from "@/components/ui/switch";
 import { Square, Lock, LockOpen, ChevronLeft, Plus } from "lucide-react";
 
 import squadLogo from "/squad-logo-white.png";
+
+const FormSchema = z.object({
+  title: z
+    .string({
+      required_error: "Escribe un titulo.",
+    })
+    .min(12, {
+      message: "Titulo debe tener al menos 12 caracteres.",
+    }),
+  // facultad: z.string({
+  //   required_error: "Elije una facultad.",
+  // }),
+  idCarrera: z.string({
+    required_error: "Elije una carrera.",
+  }),
+  description: z
+    .string({
+      required_error: "Escribe una descripcion.",
+    })
+    .min(12, {
+      message: "Descripcion debe tener al menos 12 caracteres.",
+    }),
+  privacy: z.string({
+    required_error: "Elije un modo de privacidad",
+  }),
+  maxMembers: z.string().optional(),
+});
 
 const CreateGroup = () => {
   const [groupData, setGroupData] = useState({
@@ -41,7 +72,7 @@ const CreateGroup = () => {
       try {
         const response = await api.get("/facultades");
 
-        console.log(response);
+        // console.log(response);
 
         if (response.status === 200) {
           setFacultades(response.data);
@@ -67,25 +98,39 @@ const CreateGroup = () => {
   //   }));
   // };
 
-  const handleSubmit = async (e) => {
-    // e.preventDefault();
-    // const response = await createGroup(groupData);
-    // // console.log(response);
-    // if (!response.hasOwnProperty('error')) {
-    //   alert("debug: group created successfully!");
-    //   navigate("/groups/"+response.ulid);
-    // } else {
-    //   alert("debug: group creation failed. (" + response.error.code + ")");
-    // }
+  const handleSelectFacultad = (idFacultad) => {
+    setCarreras(facultades[idFacultad]["carreras"]);
   };
 
-  const handleSelectFacultad = (event) => {
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      // title: "",
+      // description: "",
+      // privacy: "",
+      // maxMembers: 2,
+    },
+  });
 
-      const facultadKey = event.target.value;
-      // setSelectedFacultad(facultadKey);
-      setCarreras(facultades[facultadKey]["carreras"]);
+  const onSubmit = async (groupData) => {
+    console.log(groupData, memberLimitChecked);
 
-    // console.log(event);
+    groupData = { ...groupData, 
+      ["maxMembers"]: memberLimitChecked ? parseInt(groupData["maxMembers"]) : null,
+      ["idCarrera"]: parseInt(groupData["idCarrera"]),
+      ["tags"]: ["none"],
+     };
+
+    try {
+      const response = await api.post("/groups", groupData);
+      console.log(response);
+
+      if (response.status === 200) {
+        navigate(`/group/${response.data.ulid}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -106,82 +151,149 @@ const CreateGroup = () => {
             <Label className="text-xl">Nuevo grupo</Label>
           </div>
 
-          <form className="flex flex-col gap-4 p-4">
-            <div className="grid w-full items-center gap-1.5">
-              <Label>Titulo</Label>
-              <Input type="text" value={groupData.title} onChange={handleChange} required />
-            </div>
-
-            <div className="grid w-full items-center gap-1.5">
-              <Label>Facultad</Label>
-              <Select required>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="--" />
-                </SelectTrigger>
-                <SelectContent>
-                  {facultades.map((facultad, idx) => (
-                    <SelectItem key={idx} value={facultad.id}>
-                      {facultad.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid w-full items-center gap-1.5">
-              <Label>Carrera</Label>
-              <Select value={groupData.idCarrera} onValueChange={handleChange} required>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="--" />
-                </SelectTrigger>
-                <SelectContent>
-                  {carreras.map((carrera) => (
-                    <SelectItem key={carrera.id} value={carrera.id}>
-                      {carrera.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid w-full items-center gap-1.5">
-              <Label>Descripcion</Label>
-              <Textarea value={groupData.description} onChange={handleChange} placeholder="busco grupo de estudio para..." required />
-            </div>
-
-            <div className="grid w-full items-center gap-1.5">
-              <Label>Privacidad</Label>
-              <Select required>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="--" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="open">Grupo abierto</SelectItem>
-                  <SelectItem value="closed">Grupo cerrado</SelectItem>
-                  {/* <SelectItem value="private">Grupo privado</SelectItem> */}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch checked={memberLimitChecked} onCheckedChange={setMemberLimitChecked} />
-              <Label>Limitar miembros</Label>
-            </div>
-
-            {memberLimitChecked ? (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 gap-7">
               <div className="grid w-full items-center gap-1.5">
-                <Label>Limite</Label>
-                <Input type="number" placeholder="2" required />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Titulo</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            ) : null}
 
-            <div className="w-full">
-              <Button className="w-full bg-gradient shadow" type="submit">
-                <Plus />
-                Crear
-              </Button>
-            </div>
-          </form>
+              <div className="grid w-full items-center gap-1.5">
+                <FormField
+                  control={form.control}
+                  name="facultad"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Facultad</FormLabel>
+                      <Select onValueChange={handleSelectFacultad} value={field.value} defaultValue="">
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="--" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {facultades.map((facultad, idx) => (
+                            <SelectItem key={idx} value={idx.toString()}>
+                              {facultad.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid w-full items-center gap-1.5">
+                <FormField
+                  control={form.control}
+                  name="idCarrera"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Carrera</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue="">
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="--" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {carreras.map((carrera) => (
+                            <SelectItem key={carrera.id} value={carrera.id.toString()}>
+                              {carrera.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid w-full items-center gap-1.5">
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Descripcion</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="busco grupo de estudio para..." className="resize-none" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid w-full items-center gap-1.5">
+                <FormField
+                  control={form.control}
+                  name="privacy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Privacidad</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue="">
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="--" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="open">Grupo abierto</SelectItem>
+                          <SelectItem value="closed">Grupo cerrado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch checked={memberLimitChecked} onCheckedChange={setMemberLimitChecked} />
+                <Label>Limitar miembros</Label>
+              </div>
+
+              {memberLimitChecked ? (
+                <div className={`grid w-full items-center gap-1.5 ${!memberLimitChecked ? "hidden" : null}`}>
+                  <FormField
+                    control={form.control}
+                    name="maxMembers"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Limite</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ) : null}
+
+              <div className="w-full">
+                <Button className="w-full bg-gradient shadow" type="submit">
+                  <Plus />
+                  Crear
+                </Button>
+              </div>
+            </form>
+          </Form>
         </>
       )}
     </>

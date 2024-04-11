@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+
+import api from "@/components/services/Api";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { LogIn } from "lucide-react";
 import { ring } from "ldrs";
 
-const Login = () => {
+const Login = ({ isLoggedIn }) => {
   const [userdata, setUserdata] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState(false);
@@ -23,15 +24,16 @@ const Login = () => {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://squad.ddns.net/api/v1/login", userdata, { "Content-Type": "application/json" });
+      const response = await api.post("login", userdata);
       if (response.status === 200) {
-        const { token, ulid } = response.data;
+        const { token } = response.data;
+
         if (rememberMe) {
           localStorage.setItem("token", token);
-          localStorage.setItem("user", ulid);
+          localStorage.setItem("userdata", JSON.stringify(response.data));
         } else {
           sessionStorage.setItem("token", token);
-          sessionStorage.setItem("user", ulid);
+          sessionStorage.setItem("userdata", JSON.stringify(response.data));
         }
         navigate("/");
       }
@@ -45,6 +47,12 @@ const Login = () => {
     const { name, value } = event.target;
     setUserdata({ ...userdata, [name]: value });
   };
+
+  useEffect(() => {
+    if(isLoggedIn){
+      navigate("/");
+    }
+  })
 
   return (
     <div className="login-form h-screen w-full flex flex-col justify-center items-center">
