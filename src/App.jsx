@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -13,16 +13,19 @@ import ProfilePage from "./pages/ProfilePage";
 import GroupPage from "@/pages/GroupPage";
 import GroupChatPage from "./pages/GroupChatPage";
 import CreateGroupPage from "@/pages/CreateGroupPage";
+import AboutPage from "./pages/AboutPage";
+import ReportPage from "./pages/ReportPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") != null);
-  const currentuser = JSON.parse(localStorage.getItem("userdata"));
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") || sessionStorage.getItem("token"));
+  const currentuser = JSON.parse(localStorage.getItem("userdata") || sessionStorage.getItem("userdata"));
 
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn}/>} />
-        <Route path="/register" element={<RegisterPage isLoggedIn={isLoggedIn}/>} />
+        <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn} />} />
+        <Route path="/register" element={<RegisterPage isLoggedIn={isLoggedIn} />} />
 
         <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
           <Route path="/" element={<HomePage currentuser={currentuser} />} />
@@ -30,6 +33,9 @@ function App() {
           <Route path="/group/chat/:groupId" element={<GroupChatPage currentuser={currentuser} />} />
           <Route path="/create" element={<CreateGroupPage />} />
           <Route path="/user/:userId" element={<ProfilePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/report" element={<ReportPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />

@@ -152,7 +152,7 @@ const CreateGroupPage = () => {
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 gap-7">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 gap-7 lg:mx-[33%]">
               <div className="grid w-full items-center gap-1.5">
                 <FormField
                   control={form.control}

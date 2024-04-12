@@ -94,7 +94,7 @@ const RegisterPage = () => {
     // console.log(step1userdata);
     setUserdata(step1userdata);
 
-    setFormStyle({ ...formStyle, transform: "translateX(-150%)" });
+    setFormStyle({ ...formStyle, transform: "translateX(-300%)" });
   };
 
   const onSubmitStep2 = async (step2userdata) => {
@@ -153,7 +153,7 @@ const RegisterPage = () => {
           <img src="squad-logo-black.png" className="mb-4 w-full"></img>
 
           <div className="flex flex-row items-center" style={formStyle}>
-            <Card className="shadow-md min-w-full" style={{ marginRight: "50%" }}>
+            <Card className="shadow-md min-w-full" style={{ marginRight: "200%" }}>
               <CardHeader>
                 <CardTitle>Crea tu cuenta</CardTitle>
                 <CardDescription>

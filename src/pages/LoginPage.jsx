@@ -35,7 +35,8 @@ const LoginPage = ({ isLoggedIn }) => {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("userdata", JSON.stringify(response.data));
         }
-        navigate("/");
+        // navigate("/");
+        window.location.reload();
       }
     } catch (error) {
       setError(true);
@@ -49,10 +50,10 @@ const LoginPage = ({ isLoggedIn }) => {
   };
 
   useEffect(() => {
-    if(isLoggedIn){
+    if (isLoggedIn) {
       navigate("/");
     }
-  })
+  });
 
   return (
     <div className="login-form h-screen w-full flex flex-col justify-center items-center">

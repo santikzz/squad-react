@@ -31,7 +31,7 @@ const GroupPage = ({ currentuser }) => {
   const [error, setError] = useState(null);
   const [leaveGroupDrawer, setLeaveGroupDrawer] = useState(false);
   const [deleteGroupDrawer, setDeleteGroupDrawer] = useState(false);
-
+  const [optionsNav, setOptionsNav] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
 
@@ -103,10 +103,14 @@ const GroupPage = ({ currentuser }) => {
   };
 
   const handleShareGroup = () => {
-    navigator.clipboard.writeText(`group/${group.ulid}`);
-    toast("Enlace copiado al portapapeles!", {
-      description: `group/${group.ulid}`,
-    });
+    if (!navigator.clipboard) {
+      toast("No se pudo copiar al portapapeles (No SSL Encryption HTTPS Error)", { variant: "destructive" });
+    } else {
+      toast("Enlace copiado al portapapeles!", {
+        description: `group/${group.ulid}`,
+      });
+      navigator.clipboard.writeText(`group/${group.ulid}`);
+    }
   };
 
   return (
@@ -117,36 +121,33 @@ const GroupPage = ({ currentuser }) => {
           <ChevronLeft size="32" />
         </Link>
         <img src={squadLogo} className="h-full"></img>
-
-        {group && (group.owner.ulid == currentuser.ulid || group.user.isMember) ? (
-          <Sheet>
-            <SheetTrigger asChild>
-              <EllipsisVertical size="32" />
-            </SheetTrigger>
-            <SheetContent side="right" className="flex flex-col justify-between bg-black border-stone-900 text-white">
-              <>
-                <SheetHeader className="mt-32"></SheetHeader>
-                <SheetFooter>
-                  {group.user.isMember && group.owner.ulid != currentuser.ulid ? (
-                    <Button className="bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5" onClick={() => setLeaveGroupDrawer(true)}>
-                      <DoorOpen size="16" />
-                      Salir del grupo
-                    </Button>
-                  ) : null}
-
-                  {group.owner.ulid == currentuser.ulid ? (
-                    <Button className="bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5" onClick={() => setDeleteGroupDrawer(true)}>
-                      <Trash size="16" /> Eliminar grupo
-                    </Button>
-                  ) : null}
-                </SheetFooter>
-              </>
-            </SheetContent>
-          </Sheet>
-        ) : (
-          <Square color="transparent" />
-        )}
+        <EllipsisVertical size="32" onClick={() => setOptionsNav(true)} />
       </Navbar>
+
+      {group && (group.owner.ulid == currentuser.ulid || group.user.isMember) ? (
+        <Sheet open={optionsNav} onOpenChange={setOptionsNav}>
+          <SheetContent side="right" className="flex flex-col justify-between bg-black border-stone-900 text-white">
+            <>
+              <SheetHeader className="mt-32"></SheetHeader>
+              <SheetFooter className="w-full">
+                {group.user.isMember && group.owner.ulid != currentuser.ulid ? (
+                  <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5" onClick={() => setLeaveGroupDrawer(true)}>
+                    <DoorOpen size="16" />
+                    Salir del grupo
+                  </Button>
+                ) : null}
+
+                {group.owner.ulid == currentuser.ulid ? (
+                  <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5" onClick={() => setDeleteGroupDrawer(true)}>
+                    <Trash size="16" /> Eliminar grupo
+                  </Button>
+                ) : null}
+              </SheetFooter>
+            </>
+          </SheetContent>
+        </Sheet>
+      ) : // <Square color="transparent" />
+      null}
 
       {loading ? <Loader /> : null}
 
@@ -260,7 +261,6 @@ const GroupPage = ({ currentuser }) => {
                   <MessageCircle /> Abrir chat
                 </Button>
               ) : null}
-
             </div>
 
             <div className="flex flex-col gap-2">

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import api from "@/components/services/Api";
 import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Utils";
@@ -11,8 +11,9 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X } from "lucide-react";
+import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info } from "lucide-react";
 
 import "../App.css";
 import squadLogo from "/squad-logo-white.png";
@@ -22,7 +23,7 @@ import { Button } from "@/components/ui/button";
 const HomePage = ({ currentuser }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSerachQuery] = useState("");
-
+  const [sidenavOpen, setSidenavOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedTags, setSelectedTags] = useState([]);
 
@@ -116,7 +117,8 @@ const HomePage = ({ currentuser }) => {
         // setRefresh(!refresh);
         localStorage.clear("token");
         sessionStorage.clear("token");
-        navigate("/login");
+        // navigate("/login");
+        window.location.reload();
       }
     } catch (error) {
       console.error(error.message);
@@ -128,46 +130,7 @@ const HomePage = ({ currentuser }) => {
       <Navbar>
         {!showSearch ? (
           <>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Menu size="32" strokeWidth="2" />
-              </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col justify-between bg-black border-stone-900 text-white">
-                <SheetHeader className="mt-12">
-                  <div className="flex flex-row gap-4 items-center mb-12">
-                    <Avatar>
-                      <AvatarImage src={currentuser.profileImg} />
-                      <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(currentuser.name, currentuser.surname)}</AvatarFallback>
-                    </Avatar>
-                    <label className="text-white text-medium text-base text-wrap">
-                      {currentuser.name} {currentuser.surname}
-                    </label>
-                  </div>
-
-                  <div className="flex flex-col gap-8">
-                    <button className="flex flex-row justify-start text-xl outline-none bg-transparent active:text-stone-500">
-                      <UserRound className="w-6 mr-2" />
-                      Pefil
-                    </button>
-                    <button className="flex flex-row justify-start text-xl outline-none bg-transparent active:text-stone-500">
-                      <Settings className="w-6 mr-2" />
-                      Opciones
-                    </button>
-                    <button className="flex flex-row text-xl bg-gradient rounded-md py-2 items-center justify-center active:brightness-75" onClick={handleCreateGroup}>
-                      <Plus className="w-6 mr-2" />
-                      Nuevo grupo
-                    </button>
-                  </div>
-                </SheetHeader>
-
-                <SheetFooter>
-                  <button className="flex flex-row justify-start text-xl outline-none bg-transparent active:text-stone-500" onClick={handleLogout}>
-                    <LogOut className="w-6 mr-2" />
-                    Cerrar sesion
-                  </button>
-                </SheetFooter>
-              </SheetContent>
-            </Sheet>
+            <Menu size="32" strokeWidth="2" onClick={() => setSidenavOpen(true)} />
             <img src={squadLogo} className="h-full" />
             <Search className="active:brightness-50" size="32" strokeWidth="2" onClick={() => setShowSearch(true)} />
           </>
@@ -182,9 +145,89 @@ const HomePage = ({ currentuser }) => {
         )}
       </Navbar>
 
+      <Sheet open={sidenavOpen} onOpenChange={setSidenavOpen}>
+        <SheetContent side="left" className="flex flex-col justify-between bg-black border-stone-900 text-white">
+          <SheetHeader className="mt-12">
+            <div className="flex flex-row gap-4 items-center mb-12">
+              <Avatar>
+                <AvatarImage src={currentuser.profileImg} />
+                <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(currentuser.name, currentuser.surname)}</AvatarFallback>
+              </Avatar>
+              <label className="text-white text-medium text-base text-wrap">
+                {currentuser.name} {currentuser.surname}
+              </label>
+            </div>
+
+            <div className="flex flex-col gap-8">
+              <Link to="/profile" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+                <UserRound className="w-6 mr-2" />
+                Pefil
+              </Link>
+              <Link to="/settings" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+                <Settings className="w-6 mr-2" />
+                Opciones
+              </Link>
+              <button className="flex flex-row text-xl bg-gradient rounded-md py-2 items-center justify-center active:brightness-75" onClick={handleCreateGroup}>
+                <Plus className="w-6 mr-2" />
+                Nuevo grupo
+              </button>
+            </div>
+          </SheetHeader>
+
+          <div className="flex flex-col gap-8">
+            <Link to="/about" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+              <Info className="w-6 mr-2" />
+              Más Info
+            </Link>
+            <Link to="/report" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+              <Bug className="w-6 mr-2" />
+              Bugs & Sugerencias
+            </Link>
+            <button className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500" onClick={handleLogout}>
+              <LogOut className="w-6 mr-2" />
+              Cerrar sesion
+            </button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* <div className="flex flex-row p-2 gap-2">
+        <Select>
+          <SelectTrigger className="w-[180px] bg-stone-700 text-white rounded-full h-9 w-36">
+            <SelectValue placeholder="Facultad" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Fruits</SelectLabel>
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="blueberry">Blueberry</SelectItem>
+              <SelectItem value="grapes">Grapes</SelectItem>
+              <SelectItem value="pineapple">Pineapple</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <Select>
+          <SelectTrigger className="w-[180px] bg-stone-700 text-white rounded-full h-9 w-40">
+            <SelectValue placeholder="Carrera" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Fruits</SelectLabel>
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="blueberry">Blueberry</SelectItem>
+              <SelectItem value="grapes">Grapes</SelectItem>
+              <SelectItem value="pineapple">Pineapple</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div> */}
+
       {loading ? <Loader /> : null}
 
-      <div className="h-full flex flex-col p-4 gap-4">
+      <div className="h-full flex flex-col p-4 gap-4 lg:grid lg:grid-cols-3">
         {groups.map((group, idx) => (
           <Card key={group.ulid} onClick={(e) => handleGroupClick(group.ulid)} className="w-full shadow bg-stone-100 active:brightness-95">
             <CardHeader className="flex flex-row items-center gap-2">
