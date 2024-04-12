@@ -1,8 +1,12 @@
-# React + Vite
+<p align="center"><img src="https://raw.githubusercontent.com/santikzz/squad-react/main/public/squad-logo-white.png" width="400" alt="SQUAD LOGO"></p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# React + Vite + PWA + shadcn
 
-Currently, two official plugins are available:
+https://react.dev/
+https://vitejs.dev/guide/
+https://www.npmjs.com/package/vite-plugin-pwa
+https://ui.shadcn.com/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Backend: Laravel REST API https://github.com/santikzz/squad-rest
+
+<p align="center"><img src="https://raw.githubusercontent.com/santikzz/squad-react/main/public/demo.jpg" alt="demo"></p>
