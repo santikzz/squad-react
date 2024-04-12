@@ -7,7 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 
 import LoginPage from "@/pages/LoginPage";
-// import Register from "@/pages/Register";
+import RegisterPage from "@/pages/RegisterPage";
 import HomePage from "@/pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import GroupPage from "@/pages/GroupPage";
@@ -22,6 +22,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn}/>} />
+        <Route path="/register" element={<RegisterPage isLoggedIn={isLoggedIn}/>} />
 
         <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
           <Route path="/" element={<HomePage currentuser={currentuser} />} />

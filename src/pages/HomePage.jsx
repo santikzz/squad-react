@@ -19,7 +19,7 @@ import squadLogo from "/squad-logo-white.png";
 
 import { Button } from "@/components/ui/button";
 
-const Home = ({ currentuser }) => {
+const HomePage = ({ currentuser }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSerachQuery] = useState("");
 
@@ -229,4 +229,4 @@ const Home = ({ currentuser }) => {
   );
 };
 
-export default Home;
+export default HomePage;

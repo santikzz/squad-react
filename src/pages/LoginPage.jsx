@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { LogIn } from "lucide-react";
 import { ring } from "ldrs";
 
-const Login = ({ isLoggedIn }) => {
+const LoginPage = ({ isLoggedIn }) => {
   const [userdata, setUserdata] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState(false);
@@ -64,7 +64,7 @@ const Login = ({ isLoggedIn }) => {
             <CardTitle>¡Bienvenido de nuevo!</CardTitle>
             <CardDescription>
               ¿Aun no tienes una cuenta?
-              <Link className="text-blue-500 ml-1" href="/register">
+              <Link className="text-blue-500 ml-1" to="/register">
                 Registrate
               </Link>
             </CardDescription>
@@ -111,4 +111,4 @@ const Login = ({ isLoggedIn }) => {
   );
 };
 
-export default Login;
+export default LoginPage;

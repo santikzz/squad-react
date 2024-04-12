@@ -49,18 +49,18 @@ const FormSchema = z.object({
   maxMembers: z.string().optional(),
 });
 
-const CreateGroup = () => {
-  const [groupData, setGroupData] = useState({
-    title: "",
-    description: "",
-    privacy: "open",
-    maxMembers: 0,
-    idCarrera: 0,
-    tags: ["none"], // temporarely voided
-  });
+const CreateGroupPage = () => {
+  // const [groupData, setGroupData] = useState({
+  //   title: "",
+  //   description: "",
+  //   privacy: "open",
+  //   maxMembers: 0,
+  //   idCarrera: 0,
+  //   tags: ["none"], // temporarely voided
+  // });
 
   const [facultades, setFacultades] = useState([]);
-  const [selectedFacultad, setSelectedFacultad] = useState(0);
+  // const [selectedFacultad, setSelectedFacultad] = useState(0);
   const [carreras, setCarreras] = useState([]);
   const [memberLimitChecked, setMemberLimitChecked] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -86,10 +86,10 @@ const CreateGroup = () => {
     fetchFacultades();
   }, []);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setGroupData((prevData) => ({ ...prevData, [name]: value }));
-  };
+  // const handleChange = (event) => {
+  //   const { name, value } = event.target;
+  //   setGroupData((prevData) => ({ ...prevData, [name]: value }));
+  // };
 
   // const handleTagChange = (newTags) => {
   //   setGroupData((prevData) => ({
@@ -300,4 +300,4 @@ const CreateGroup = () => {
   );
 };
 
-export default CreateGroup;
+export default CreateGroupPage;

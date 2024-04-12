@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 
 import squadLogo from "/squad-logo-white.png";
 
-const Group = ({ currentuser }) => {
+const GroupPage = ({ currentuser }) => {
   const navigate = useNavigate();
 
   const { groupId } = useParams();
@@ -290,4 +290,4 @@ const Group = ({ currentuser }) => {
   );
 };
 
-export default Group;
+export default GroupPage;

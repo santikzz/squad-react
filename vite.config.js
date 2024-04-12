@@ -5,26 +5,27 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/",
   plugins: [react(),
   VitePWA({
     registerType: 'autoUpdate',
-    includeAssets: ['/squad-react/dist/squad-logo-white.png'],
+    includeAssets: ['/squad-logo-white.png'],
     manifest: {
       name: 'SQUAD',
       short_name: 'SQUAD',
       theme_color: '#000000',
       background_color: '#000000',
       display: 'standalone',
-      scope: '/squad-react/dist/',
-      start_url: '/squad-react/dist/',
+      scope: '/',
+      start_url: '/',
       icons: [
         {
-          src: '/squad-react/dist/squad-icon.png',
+          src: '/squad-icon.png',
           sizes: '512x512',
           type: 'image/png'
         },
         {
-          src: '/squad-react/dist/squad-icon-maskable.png',
+          src: '/squad-icon-maskable.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'maskable'
