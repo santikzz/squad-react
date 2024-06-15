@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { LogIn, ChevronRight, ChevronLeft } from "lucide-react";
 import { ring } from "ldrs";
 
+import assets from "@/Assets";
 // import squadLogo from "/squad-logo-black.png";
 
 const userdataFormSchema = z
@@ -150,7 +151,7 @@ const RegisterPage = () => {
 
       <div className="login-form h-screen w-full flex flex-col justify-center items-center overflow-x-hidden">
         <div className="w-96 flex flex-col justify-center items-center">
-          <img src="squad-logo-black.png" className="mb-4 w-full"></img>
+          <img src={assets.logo1_black} className="mb-4 w-full"></img>
 
           <div className="flex flex-row items-center" style={formStyle}>
             <Card className="shadow-md min-w-full" style={{ marginRight: "200%" }}>

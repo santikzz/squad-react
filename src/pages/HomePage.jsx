@@ -13,10 +13,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info } from "lucide-react";
+import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell } from "lucide-react";
 
 import "../App.css";
-import squadLogo from "/squad-logo-white.png";
+import assets from "@/Assets";
+// import assets.logo1_white from "static/squad-logo-white.png";
 
 import { Button } from "@/components/ui/button";
 
@@ -131,7 +132,7 @@ const HomePage = ({ currentuser }) => {
         {!showSearch ? (
           <>
             <Menu size="32" strokeWidth="2" onClick={() => setSidenavOpen(true)} />
-            <img src={squadLogo} className="h-full" />
+            <img src={assets.logo1_white} className="h-full" />
             <Search className="active:brightness-50" size="32" strokeWidth="2" onClick={() => setShowSearch(true)} />
           </>
         ) : (
@@ -159,13 +160,17 @@ const HomePage = ({ currentuser }) => {
             </div>
 
             <div className="flex flex-col gap-8">
-              <Link to="/profile" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+              <Link to={"/user/"+currentuser.ulid} className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
                 <UserRound className="w-6 mr-2" />
                 Pefil
               </Link>
               <Link to="/settings" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
                 <Settings className="w-6 mr-2" />
                 Opciones
+              </Link>
+              <Link to="/notifications" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+                <Bell className="w-6 mr-2" />
+                Notificaciones
               </Link>
               <button className="flex flex-row text-xl bg-gradient rounded-md py-2 items-center justify-center active:brightness-75" onClick={handleCreateGroup}>
                 <Plus className="w-6 mr-2" />

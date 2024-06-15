@@ -11,7 +11,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Square, ChevronLeft, Plus, Users, Quote } from "lucide-react";
 
-import squadLogo from "/squad-logo-white.png";
+import assets from "@/Assets";
+// import squadLogo from "/squad-logo-white.png";
 
 const ProfilePage = () => {
   const { userId } = useParams();
@@ -40,7 +41,7 @@ const ProfilePage = () => {
         <Link to="/" className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={squadLogo} className="h-full"></img>
+        <img src={assets.logo1_white} className="h-full"></img>
         <Square color="transparent" />
       </Navbar>
 

@@ -21,7 +21,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { Square, Lock, LockOpen, ChevronLeft, Users, Forward, X, Ban, MessageCircle, EllipsisVertical, Trash, DoorOpen, Link as LucideLink, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import squadLogo from "/squad-logo-white.png";
+import assets from "@/Assets";
+// import assets.logo1_white from "/squad-logo-white.png";
 
 const GroupPage = ({ currentuser }) => {
   const navigate = useNavigate();
@@ -120,7 +121,7 @@ const GroupPage = ({ currentuser }) => {
         <Link to="/" className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={squadLogo} className="h-full"></img>
+        <img src={assets.logo1_white} className="h-full"></img>
         <EllipsisVertical size="32" onClick={() => setOptionsNav(true)} />
       </Navbar>
 

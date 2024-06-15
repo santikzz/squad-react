@@ -9,7 +9,8 @@ import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { Square, ChevronLeft, SendHorizontal } from "lucide-react";
 
-import squadLogo from "/squad-logo-white.png";
+import assets from "@/Assets";
+// import squadLogo from "/squad-logo-white.png";
 
 const GroupChatPage = () => {
   const { groupId } = useParams();
@@ -20,7 +21,7 @@ const GroupChatPage = () => {
         <Link to={`/group/${groupId}`} className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={squadLogo} className="h-full"></img>
+        <img src={assets.logo1_white} className="h-full"></img>
         <Square color="transparent" />
       </Navbar>
 

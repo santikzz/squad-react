@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import api from "@/components/services/Api";
 
+import assets from "@/Assets";
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -58,7 +60,7 @@ const LoginPage = ({ isLoggedIn }) => {
   return (
     <div className="login-form h-screen w-full flex flex-col justify-center items-center">
       <div className="w-96 flex flex-col justify-center items-center">
-        <img src="squad-logo-black.png" className="mb-4 w-full"></img>
+        <img src={assets.logo1_black} className="mb-4 w-full"></img>
 
         <Card className="w-full shadow-md">
           <CardHeader>

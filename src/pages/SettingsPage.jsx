@@ -11,7 +11,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Square, ChevronLeft, Settings } from "lucide-react";
 
 import "../App.css";
-import squadLogo from "/squad-logo-white.png";
+import assets from "@/Assets";
+// import squadLogo from "/squad-logo-white.png";
 
 const SettingsPage = ({ currentuser }) => {
   return (
@@ -20,7 +21,7 @@ const SettingsPage = ({ currentuser }) => {
         <Link to="/">
           <ChevronLeft size="32" strokeWidth="2" />
         </Link>
-        <img src={squadLogo} className="h-full" />
+        <img src={assets.logo1_white} className="h-full" />
         <Square color="transparent" />
       </Navbar>
 
