@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell } from "lucide-react";
+import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell, Home, SquarePlus } from "lucide-react";
 
 import "../App.css";
 import assets from "@/Assets";
@@ -160,7 +160,7 @@ const HomePage = ({ currentuser }) => {
             </div>
 
             <div className="flex flex-col gap-8">
-              <Link to={"/user/"+currentuser.ulid} className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+              <Link to={"/user/" + currentuser.ulid} className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
                 <UserRound className="w-6 mr-2" />
                 Pefil
               </Link>
@@ -273,6 +273,37 @@ const HomePage = ({ currentuser }) => {
           </Card>
         ))}
       </div>
+
+
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t-[1px]">
+
+        <div className="w-full flex flex-row justify-between gap-4 py-4 px-8 items-center">
+
+          <Link to="/" className="active:brightness-50">
+            <Home size="20" strokeWidth="2" color="black"></Home>
+          </Link>
+
+          <Link to="/settings" className="active:brightness-50">
+            <Settings size="20" strokeWidth="2" color="black"></Settings>
+          </Link>
+
+          <Link to="/create" className="active:brightness-50">
+            <SquarePlus size="26" strokeWidth="2" color="black"></SquarePlus>
+          </Link>
+
+          <Link to="/notifications" className="active:brightness-50">
+            <Bell size="20" strokeWidth="2" color="black"></Bell>
+          </Link>
+
+          <Link to={"/user/" + currentuser.ulid} className="active:brightness-50">
+            <UserRound size="20" strokeWidth="2" color="black"></UserRound>
+          </Link>
+
+        </div>
+
+      </div>
+
+
     </>
   );
 };

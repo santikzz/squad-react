@@ -25,7 +25,7 @@ const AboutPage = ({ currentuser }) => {
       <div className="h-full flex flex-col justify-between p-4 gap-[6rem]">
         <div className="flex flex-col">
           <img src={assets.logo1_black} className="h-full" />
-          <Label className="text-center text-stone-300 text-xs">SQUAD Version (BETA) 1.12424</Label>
+          <Label className="text-center text-stone-300 text-xs">squad beta release v.15.06.24</Label>
           <p className="text-justify text-base p-5 text-stone-900">SQUAD es una plataforma integral en línea diseñada para facilitar la colaboración fluida entre los estudiantes, al proporcionar una solución centralizada para encontrar grupos de estudio. Creada pensando en la eficiencia, esta aplicación integra todas las funcionalidades necesarias en una única interfaz. Los estudiantes pueden crear fácilmente perfiles de usuario, formar y buscar grupos, y unirse a ellos, con la capacidad de filtrar por facultad, carrera, clase, exámenes o cualquier otro criterio relevante.</p>
         </div>
 
@@ -34,7 +34,7 @@ const AboutPage = ({ currentuser }) => {
             Creado por: <br />
           </Label>
           <Label className="text-center text-xl">
-            Santiago B. Llaurado <br />y<br /> Ana Olivia Todesco
+            Santiago Bugnón <br />y<br /> Ana Olivia Todesco
           </Label>
         </div>
       </div>

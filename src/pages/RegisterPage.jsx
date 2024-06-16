@@ -149,24 +149,25 @@ const RegisterPage = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="login-form h-screen w-full flex flex-col justify-center items-center overflow-x-hidden">
-        <div className="w-96 flex flex-col justify-center items-center">
-          <img src={assets.logo1_black} className="mb-4 w-full"></img>
+      <div className="login-form h-screen w-full flex flex-col items-center overflow-x-hidden">
 
-          <div className="flex flex-row items-center" style={formStyle}>
-            <Card className="shadow-md min-w-full" style={{ marginRight: "200%" }}>
-              <CardHeader>
-                <CardTitle>Crea tu cuenta</CardTitle>
-                <CardDescription>
-                  ¿Ya tienes una cuenta?
-                  <Link className="text-blue-500 ml-1" to="/login">
-                    Iniciar sesion
-                  </Link>
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4">
-                <Form {...userdataForm}>
-                  <form onSubmit={userdataForm.handleSubmit(onSubmitStep1)} className="flex flex-col gap-3">
+        <div className="w-96 h-full flex flex-col items-center">
+          {/* <img src={assets.logo1_black} className="mb-4 w-full"></img> */}
+
+          <div className="flex flex-col items-center justify-center pt-20 pb-4 gap-2">
+            <Label className="text-4xl">Crea tu cuenta</Label>
+            <Link to="/login" className="text-blue-500">o Iniciar Sesion</Link>
+          </div>
+
+          <div className="h-full flex flex-row items-center" style={formStyle}>
+
+            <div className="min-w-full h-full py-6" style={{ marginRight: "200%" }} >
+
+              <Form {...userdataForm}>
+                <form onSubmit={userdataForm.handleSubmit(onSubmitStep1)} className="h-full flex flex-col justify-between">
+
+                  <div className="flex flex-col gap-3">
+
                     <FormField
                       control={userdataForm.control}
                       name="email"
@@ -238,28 +239,26 @@ const RegisterPage = () => {
                       )}
                     />
 
-                    <Button type="submit" className={`w-full flex gap-1`}>
+                  </div>
+
+                  <div className="flex">
+                    <Button type="submit" className={`w-full flex gap-1 h-[50px] text-base bg-black`}>
                       <ChevronRight size="20" />
                       Continuar
                     </Button>
-                  </form>
-                </Form>
-              </CardContent>
-              <CardFooter></CardFooter>
-            </Card>
+                  </div>
 
-            <Card className="shadow-md min-w-full h-full flex flex-col">
-              <CardHeader>
-                <CardTitle>
-                  <button className="bg-transparent flex items-center" onClick={handleGoBack}>
-                    <ChevronLeft size="25" /> Atras
-                  </button>
-                </CardTitle>
-                <CardDescription></CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col w-full h-full px-6 py-0">
+                </form>
+              </Form>
+
+            </div>
+
+            <div className="min-w-full h-full py-6">
+
+              <div className="flex flex-col h-full">
+
                 <Form {...userdataStep2Form}>
-                  <form onSubmit={userdataStep2Form.handleSubmit(onSubmitStep2)} className="flex flex-col h-full justify-between">
+                  <form onSubmit={userdataStep2Form.handleSubmit(onSubmitStep2)} className="h-full flex flex-col justify-between">
                     <div className="w-full flex flex-col gap-3">
                       <FormField
                         control={userdataStep2Form.control}
@@ -310,27 +309,39 @@ const RegisterPage = () => {
                           </FormItem>
                         )}
                       />
+                      {error ? <Label className="text-center text-red-600">{error}</Label> : null}
                     </div>
 
-                    {error ? <Label className="text-center text-red-600">{error}</Label> : null}
-                    <Button type="submit" className={`w-full flex gap-1 ${loading ? "brightness-150" : null}`}>
-                      {!loading ? (
-                        <>
-                          <ChevronRight size="20" />
-                          Registrarse
-                        </>
-                      ) : (
-                        <l-ring size="20" stroke="3" bg-opacity="0" speed="2" color="gray"></l-ring>
-                      )}
-                    </Button>
+
+                    <div className="flex flex-row justify-between gap-6">
+
+                      <Button variant="outline" className="flex items-center shadow-sm h-[50px] w-full" onClick={handleGoBack}>
+                        <ChevronLeft size="25" /> Atras
+                      </Button>
+
+                      <Button type="submit" className={`h-[50px] bg-gradient shadow-sm w-full flex gap-1 ${loading ? "brightness-80" : null}`}>
+
+                        {!loading ? (
+                          <>
+                            Registrarse
+                            <ChevronRight size="20" />
+                          </>
+                        ) : (
+                          <l-ring size="20" stroke="3" bg-opacity="0" speed="2" color="gray"></l-ring>
+                        )}
+                      </Button>
+                    </div>
+
                   </form>
                 </Form>
-              </CardContent>
-              <CardFooter></CardFooter>
-            </Card>
+
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
+
     </>
   );
 };
