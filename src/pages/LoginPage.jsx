@@ -16,7 +16,7 @@ import { ring } from "ldrs";
 
 const LoginPage = ({ isLoggedIn }) => {
   const [userdata, setUserdata] = useState({});
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -70,12 +70,12 @@ const LoginPage = ({ isLoggedIn }) => {
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label className="text-base flex flex-row items-center gap-1.5"><Mail size="16"/> Email</Label>
-            <Input variant="outline" type="text" className={`${error ? "outline outline-2 outline-red-600" : null} `} name="email" value={userdata.email} onChange={handleInputChange} id="email" />
+            <Input variant="outline" type="text" className={`border-[1px] border-gray-300 ${error ? "outline outline-2 outline-red-600" : null} `} name="email" value={userdata.email} onChange={handleInputChange} id="email" />
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label className="text-base flex flex-row items-center gap-1.5"><Lock size="16"/> Contraseña</Label>
-            <Input variant="outline" type="password" className={`${error ? "outline outline-2 outline-red-600" : null} `} name="password" value={userdata.password} onChange={handleInputChange} id="password" />
+            <Input variant="outline" type="password" className={`border-[1px] border-gray-300 ${error ? "outline outline-2 outline-red-600" : null} `} name="password" value={userdata.password} onChange={handleInputChange} id="password" />
           </div>
 
         </div>
@@ -123,7 +123,7 @@ const LoginPage = ({ isLoggedIn }) => {
         </div>
 
         <div className="fixed bottom-0 left-0 w-full flex justify-center pb-2">
-          <label className="text-gray-300" style={{fontFamily: "consolas"}}>squad beta release v.15.06.24</label>
+          <label className="text-gray-400" style={{fontFamily: "consolas"}}>squad beta release v.15.06.24</label>
         </div>
 
       </div>

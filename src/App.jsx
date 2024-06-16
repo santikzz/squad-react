@@ -32,10 +32,10 @@ function App() {
           <Route path="/group/:groupId" element={<GroupPage currentuser={currentuser} />} />
           <Route path="/group/chat/:groupId" element={<GroupChatPage currentuser={currentuser} />} />
           <Route path="/create" element={<CreateGroupPage />} />
-          <Route path="/user/:userId" element={<ProfilePage />} />
+          <Route path="/user/:userId" element={<ProfilePage currentuser={currentuser}/>} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/report" element={<ReportPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings" element={<SettingsPage currentuser={currentuser} />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />

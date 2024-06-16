@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import api from "@/components/services/Api";
+import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Utils";
 
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
@@ -14,13 +15,17 @@ import { Square, ChevronLeft, Plus, Users, Quote } from "lucide-react";
 import assets from "@/Assets";
 // import squadLogo from "/squad-logo-white.png";
 
-const ProfilePage = () => {
+const ProfilePage = ({ currentuser }) => {
   const { userId } = useParams();
 
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isOwn, setIsOwn] = useState(false);
 
   useEffect(() => {
+
+    setIsOwn(currentuser.ulid == userId);
+
     const fetchProfle = async () => {
       try {
         const response = await api.get(`/user/${userId}`);
@@ -52,7 +57,7 @@ const ProfilePage = () => {
           <Card className="flex justify-start bg-stone-50 p-4 gap-4 shadow-md">
             <Avatar className="w-16 h-16">
               <AvatarImage src="" alt="profile" />
-              <AvatarFallback>AB</AvatarFallback>
+              <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(currentuser.name, currentuser.surname)}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col justify-center">
               <Label className="text-base text-black">

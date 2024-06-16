@@ -196,46 +196,14 @@ const HomePage = ({ currentuser }) => {
         </SheetContent>
       </Sheet>
 
-      {/* <div className="flex flex-row p-2 gap-2">
-        <Select>
-          <SelectTrigger className="w-[180px] bg-stone-700 text-white rounded-full h-9 w-36">
-            <SelectValue placeholder="Facultad" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Fruits</SelectLabel>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        <Select>
-          <SelectTrigger className="w-[180px] bg-stone-700 text-white rounded-full h-9 w-40">
-            <SelectValue placeholder="Carrera" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Fruits</SelectLabel>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div> */}
-
       {loading ? <Loader /> : null}
 
-      <div className="h-full flex flex-col p-4 gap-4 lg:grid lg:grid-cols-3">
+      <div className="h-screen flex flex-col p-4 gap-5 lg:grid lg:grid-cols-3 bg-slate-50">
         {groups.map((group, idx) => (
-          <Card key={group.ulid} onClick={(e) => handleGroupClick(group.ulid)} className="w-full shadow bg-stone-100 active:brightness-95">
-            <CardHeader className="flex flex-row items-center gap-2">
+
+          <Card key={group.ulid} onClick={(e) => handleGroupClick(group.ulid)} className="w-full shadow bg-white active:brightness-95 flex flex-col p-6 gap-4 rounded-xl">
+
+            <div className="flex flex-row items-center gap-2 h-full">
               <Avatar className="w-12 h-12">
                 <AvatarImage src={group.owner.profileImg} alt="profile" />
                 <AvatarFallback className="bg-stone-200">{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
@@ -245,19 +213,21 @@ const HomePage = ({ currentuser }) => {
                   {group.owner.name} {group.owner.surname}
                 </Label>
                 <Label className="text-stone-400 text-xs font-normal">
-                  {group.facultad} / {group.carrera}
+                  {group.facultad} - {group.carrera}
                 </Label>
                 <Label className="flex gap-1 items-center text-stone-400 text-xs font-normal">
                   <Clock size="12" />
                   {FormatTimeAgo(group.creationDate)}
                 </Label>
               </div>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2 ">
+            </div>
+
+            <div className="flex flex-col gap-2">
               <Label className="text-base">{group.title}</Label>
-              <p className="text-sm">{group.description}</p>
-            </CardContent>
-            <CardFooter className="flex flex-row justify-between gap-2">
+              <p className="text-base">{group.description}</p>
+            </div>
+
+            <div className="flex flex-row justify-between gap-2">
               <div className="flex flex-row items-center bg-gradient rounded-lg py-1.5 px-2.5 text-stone-100 gap-1.5 shadow-sm min-w-32 justify-center">
                 {group.privacy == "open" ? <LockOpen size="18" strokeWidth="2" color="white"></LockOpen> : <Lock size="18" strokeWidth="2" color="white"></Lock>}
                 <Label className="text-normal font-medium">Grupo {group.privacy == "open" ? "abierto" : "cerrado"}</Label>
@@ -269,13 +239,15 @@ const HomePage = ({ currentuser }) => {
                   {group.maxMembers != null ? `/` + group.maxMembers : ""}
                 </Label>
               </div>
-            </CardFooter>
+            </div>
+
           </Card>
+
         ))}
       </div>
 
 
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t-[1px]">
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t-[1px] lg:hidden">
 
         <div className="w-full flex flex-row justify-between gap-4 py-4 px-8 items-center">
 
