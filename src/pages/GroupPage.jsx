@@ -30,11 +30,17 @@ const GroupPage = ({ currentuser }) => {
   const { groupId } = useParams();
   const [group, setGroup] = useState(null);
   const [error, setError] = useState(null);
+
   const [leaveGroupDrawer, setLeaveGroupDrawer] = useState(false);
   const [deleteGroupDrawer, setDeleteGroupDrawer] = useState(false);
+  const [memberOptionsDrawer, setMemberOptionsDrawer] = useState(false);
+
   const [optionsNav, setOptionsNav] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
+
+  const [isOwner, setIsOwner] = useState(false);
+  const [memberKickId, setMemberKickId] = useState(null);
 
   // const { toast } = useToast();
 
@@ -47,6 +53,7 @@ const GroupPage = ({ currentuser }) => {
 
         if (response.status === 200) {
           setGroup(response.data);
+          setIsOwner(currentuser.ulid == response.data.owner.ulid);
           setLoading(false);
         }
       } catch (error) {
@@ -71,7 +78,7 @@ const GroupPage = ({ currentuser }) => {
     }
   };
 
-  const handleMemberClick = (userId) => {
+  const handleMemberProfileClick = (userId) => {
     navigate(`/user/${userId}`);
   };
 
@@ -114,6 +121,22 @@ const GroupPage = ({ currentuser }) => {
     }
   };
 
+  const openMemberOptionsDrawer = (userId) => {
+    setMemberKickId(userId);
+    setMemberOptionsDrawer(true);
+  }
+
+  const handleMemberKick = async (userId) => {
+    try {
+      const response = await api.get(`/groups/${group.ulid}/kick/${memberKickId}`);
+      if (response.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
   return (
     <>
       <Toaster />
@@ -125,7 +148,7 @@ const GroupPage = ({ currentuser }) => {
         <EllipsisVertical size="32" onClick={() => setOptionsNav(true)} />
       </Navbar>
 
-      {group && (group.owner.ulid == currentuser.ulid || group.user.isMember) ? (
+      {group && (isOwner || group.user.isMember) ? (
         <Sheet open={optionsNav} onOpenChange={setOptionsNav}>
           <SheetContent side="right" className="flex flex-col justify-between bg-black border-stone-900 text-white">
             <>
@@ -138,17 +161,17 @@ const GroupPage = ({ currentuser }) => {
                   </Button>
                 ) : null}
 
-                {group.owner.ulid == currentuser.ulid ? (
+                {isOwner ? (
                   <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5" onClick={() => setDeleteGroupDrawer(true)}>
                     <Trash size="16" /> Eliminar grupo
                   </Button>
                 ) : null}
+
               </SheetFooter>
             </>
           </SheetContent>
         </Sheet>
-      ) : // <Square color="transparent" />
-      null}
+      ) : null}
 
       {loading ? <Loader /> : null}
 
@@ -192,8 +215,27 @@ const GroupPage = ({ currentuser }) => {
             </DrawerContent>
           </Drawer>
 
+          <Drawer open={memberOptionsDrawer} onOpenChange={setMemberOptionsDrawer}>
+            <DrawerContent>
+              {/* <DrawerHeader>
+                <DrawerTitle>¿Estas seguro que quieres eliminar este grupo?</DrawerTitle>
+                <DrawerDescription>Esta accion no se puede deshacer.</DrawerDescription>
+              </DrawerHeader> */}
+              <DrawerFooter>
+                <Button className="bg-red-600 mb-10" onClick={() => handleMemberKick()}>
+                  Echar Miembro
+                </Button>
+                <DrawerClose>
+                  <Button className="w-full" variant="outline">
+                    Cancelar
+                  </Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+
           <div className="bg-black h-40 flex flex-col px-4 py-6 gap-4 shadow-lg">
-            <div className="flex flex-row gap-2" onClick={() => handleMemberClick(group.owner.ulid)}>
+            <div className="flex flex-row gap-2" onClick={() => handleMemberProfileClick(group.owner.ulid)}>
               <Avatar>
                 <AvatarImage src={group.owner.profileImg} alt="profile" />
                 <AvatarFallback>{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
@@ -257,7 +299,7 @@ const GroupPage = ({ currentuser }) => {
                 ) : null
               ) : null}
 
-              {group.owner.ulid == currentuser.ulid || group.user.isMember ? (
+              {isOwner || group.user.isMember ? (
                 <Button className="bg-gradient active:brightness-75 min-h-12 text-white font-medium shadow-sm" onClick={handleOpenChat}>
                   <MessageCircle /> Abrir chat
                 </Button>
@@ -268,18 +310,28 @@ const GroupPage = ({ currentuser }) => {
               <Label>Miembros</Label>
 
               {group.members.map((member, idx) => (
-                <Card key={member.ulid} onClick={() => handleMemberClick(member.ulid)} className="flex bg-stone-50 p-4 shadow-sm active:brightness-95">
-                  <div className="flex flex-row gap-2">
-                    <Avatar>
-                      <AvatarImage src={member.profileImg} alt="profile" />
-                      <AvatarFallback>{UsernameAvatarFallout(member.name, member.surname)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col justify-center mt-0">
-                      <Label className="text-sm text-stone-900">
-                        {member.name} {member.surname}
-                      </Label>
-                      {/* <Label className="text-stone-400 text-xs font-light">{member.facultad} | {member.carrera}</Label> */}
+                <Card key={member.ulid} className="flex bg-stone-50 p-4 shadow-sm active:brightness-95">
+
+                  <div className="flex flex-row items-center justify-between w-full pl-2">
+
+                    <div className="flex flex-row gap-2" onClick={() => handleMemberProfileClick(member.ulid)}>
+                      <Avatar>
+                        <AvatarImage src={member.profileImg} alt="profile" />
+                        <AvatarFallback>{UsernameAvatarFallout(member.name, member.surname)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col justify-center mt-0">
+                        <Label className="text-sm text-stone-900">
+                          {member.name} {member.surname}
+                        </Label>
+                      </div>
                     </div>
+
+                    {isOwner ? (
+                      <div className="p-2" onClick={() => openMemberOptionsDrawer(member.ulid)}>
+                        <EllipsisVertical />
+                      </div>
+                    ) : null}
+
                   </div>
                 </Card>
               ))}

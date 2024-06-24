@@ -8,9 +8,11 @@ import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
 
 import { Label } from "@/components/ui/label";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { Square, ChevronLeft, Plus, Users, Quote } from "lucide-react";
+import { EllipsisVertical, ChevronLeft, Flag, Quote } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import assets from "@/Assets";
 // import squadLogo from "/squad-logo-white.png";
@@ -21,6 +23,7 @@ const ProfilePage = ({ currentuser }) => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [isOwn, setIsOwn] = useState(false);
+  const [userOptions, setUserOptions] = useState(false);
 
   useEffect(() => {
 
@@ -40,6 +43,20 @@ const ProfilePage = ({ currentuser }) => {
     fetchProfle();
   }, []);
 
+
+
+  // {
+  //   "ulid": "a14b36192df54d95151a58e8c39a0806",
+  //   "name": "Verdie Barrows",
+  //   "surname": "Lubowitz",
+  //   "about": "Quo ipsa officia ea corrupti. Voluptatem molestiae reprehenderit ipsam consectetur nulla non id. Possimus voluptatem aliquid quia deserunt corrupti.",
+  //   "facultad": "HUMANAS",
+  //   "carrera": "carrera4",
+  //   "email": "lula86@example.com",
+  //   "memberSince": "10/04/2024",
+  //   "profileImg": null
+  // }
+
   return (
     <>
       <Navbar>
@@ -47,35 +64,59 @@ const ProfilePage = ({ currentuser }) => {
           <ChevronLeft size="32" />
         </Link>
         <img src={assets.logo1_white} className="h-full"></img>
-        <Square color="transparent" />
+        <EllipsisVertical size="32" onClick={() => setUserOptions(true)} />
       </Navbar>
+
+
+      <Sheet open={userOptions} onOpenChange={setUserOptions}>
+        <SheetContent side="right" className="flex flex-col justify-between bg-black border-stone-900 text-white">
+          <>
+            <SheetHeader className="mt-32"></SheetHeader>
+            <SheetFooter className="w-full">
+
+              <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5">
+                <Flag size="16"/>
+                Reportar usuario
+              </Button>
+            </SheetFooter>
+          </>
+        </SheetContent>
+      </Sheet>
+
 
       {loading ? (
         <Loader />
       ) : (
+
         <div className="flex flex-col pt-8 p-4 gap-6 justify-start">
-          <Card className="flex justify-start bg-stone-50 p-4 gap-4 shadow-md">
-            <Avatar className="w-16 h-16">
-              <AvatarImage src="" alt="profile" />
-              <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(currentuser.name, currentuser.surname)}</AvatarFallback>
+
+          <div className="flex flex-col w-full items-center">
+
+            <Avatar className="w-32 h-32">
+              <AvatarImage src={user.profileImg} alt="profile" />
+              <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(user.name, user.surname)}</AvatarFallback>
             </Avatar>
-            <div className="flex flex-col justify-center">
-              <Label className="text-base text-black">
+
+            <div className="flex flex-col items-center">
+              <Label className="text-2xl text-black">
                 {user.name} {user.surname}
               </Label>
-              <Label className="text-stone-700 text-sm font-normal">{user.email}</Label>
-              <Label className="text-stone-700 text-sm font-normal">
-                {user.facultad} / {user.carrera}
+
+              {/* <Label className="text-stone-700 text-sm font-normal">{user.email}</Label> */}
+              <Label className="text-stone-700 text-base font-normal">
+                {user.facultad} - {user.carrera}
               </Label>
             </div>
-          </Card>
+
+          </div>
+
 
           <div className="flex flex-col">
             <Label className="font-medium text-base mb-2 flex gap-1.5 items-center">
               <Quote size="16" />
               Sobre mi
             </Label>
-            <Card className="flex flex-col bg-stone-50 p-4 shadow-md">
+            <Card className="flex flex-col bg-stone-50 p-4">
               <Label className="font-normal text-base">{user.about}</Label>
             </Card>
           </div>

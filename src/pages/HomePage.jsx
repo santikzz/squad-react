@@ -6,6 +6,7 @@ import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Util
 
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
+import BottomNav from "@/components/BottomNav";
 
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +28,7 @@ const HomePage = ({ currentuser }) => {
   const [sidenavOpen, setSidenavOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const timeoutRef = useRef(null);
   const searchInputRef = useRef();
@@ -81,6 +83,20 @@ const HomePage = ({ currentuser }) => {
       searchInputRef.current.focus();
     }
   }, [showSearch]);
+
+  useEffect(() => {
+    const fetchNotificationsBadge = async () => {
+      try {
+        const response = await api.get(`/user/notifications`);
+        if (response.status === 200) {
+          setBadgeCount(response.data.badges);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    fetchNotificationsBadge();
+  }, [])
 
   // const handleTagClick = (value) => {
   //   if (selectedTags.includes(value)) {
@@ -209,15 +225,15 @@ const HomePage = ({ currentuser }) => {
                 <AvatarFallback className="bg-stone-200">{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
+                <Label className="flex gap-1 items-center text-stone-400 text-xs font-normal">
+                  <Clock size="12" />
+                  {FormatTimeAgo(group.creationDate)}
+                </Label>
                 <Label className="text-sm">
                   {group.owner.name} {group.owner.surname}
                 </Label>
                 <Label className="text-stone-400 text-xs font-normal">
                   {group.facultad} - {group.carrera}
-                </Label>
-                <Label className="flex gap-1 items-center text-stone-400 text-xs font-normal">
-                  <Clock size="12" />
-                  {FormatTimeAgo(group.creationDate)}
                 </Label>
               </div>
             </div>
@@ -247,33 +263,7 @@ const HomePage = ({ currentuser }) => {
       </div>
 
 
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t-[1px] lg:hidden">
-
-        <div className="w-full flex flex-row justify-between gap-4 py-4 px-8 items-center">
-
-          <Link to="/" className="active:brightness-50">
-            <Home size="20" strokeWidth="2" color="black"></Home>
-          </Link>
-
-          <Link to="/settings" className="active:brightness-50">
-            <Settings size="20" strokeWidth="2" color="black"></Settings>
-          </Link>
-
-          <Link to="/create" className="active:brightness-50">
-            <SquarePlus size="26" strokeWidth="2" color="black"></SquarePlus>
-          </Link>
-
-          <Link to="/notifications" className="active:brightness-50">
-            <Bell size="20" strokeWidth="2" color="black"></Bell>
-          </Link>
-
-          <Link to={"/user/" + currentuser.ulid} className="active:brightness-50">
-            <UserRound size="20" strokeWidth="2" color="black"></UserRound>
-          </Link>
-
-        </div>
-
-      </div>
+      <BottomNav currentuser={currentuser} badgeCount={badgeCount}></BottomNav>
 
 
     </>

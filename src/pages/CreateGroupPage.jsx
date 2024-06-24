@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Switch } from "@/components/ui/switch";
 
 import { Square, Lock, LockOpen, ChevronLeft, Plus } from "lucide-react";
+import { ring } from "ldrs";
 
 import assets from "@/Assets";
 // import squadLogo from "/squad-logo-white.png";
@@ -34,9 +35,9 @@ const FormSchema = z.object({
   // facultad: z.string({
   //   required_error: "Elije una facultad.",
   // }),
-  idCarrera: z.string({
-    required_error: "Elije una carrera.",
-  }),
+  // idCarrera: z.string({
+  //   required_error: "Elije una carrera.",
+  // }),
   description: z
     .string({
       required_error: "Escribe una descripcion.",
@@ -60,32 +61,34 @@ const CreateGroupPage = () => {
   //   tags: ["none"], // temporarely voided
   // });
 
-  const [facultades, setFacultades] = useState([]);
+  // const [facultades, setFacultades] = useState([]);
   // const [selectedFacultad, setSelectedFacultad] = useState(0);
-  const [carreras, setCarreras] = useState([]);
+  // const [carreras, setCarreras] = useState([]);
   const [memberLimitChecked, setMemberLimitChecked] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   const navigate = useNavigate();
+  ring.register();
 
-  useEffect(() => {
-    const fetchFacultades = async () => {
-      try {
-        const response = await api.get("/facultades");
+  // useEffect(() => {
+  //   const fetchFacultades = async () => {
+  //     try {
+  //       const response = await api.get("/facultades");
 
-        // console.log(response);
+  //       // console.log(response);
 
-        if (response.status === 200) {
-          setFacultades(response.data);
-          setCarreras(response.data[0]["carreras"]);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchFacultades();
-  }, []);
+  //       if (response.status === 200) {
+  //         setFacultades(response.data);
+  //         setCarreras(response.data[0]["carreras"]);
+  //         setLoading(false);
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   fetchFacultades();
+  // }, []);
 
   // const handleChange = (event) => {
   //   const { name, value } = event.target;
@@ -99,9 +102,9 @@ const CreateGroupPage = () => {
   //   }));
   // };
 
-  const handleSelectFacultad = (idFacultad) => {
-    setCarreras(facultades[idFacultad]["carreras"]);
-  };
+  // const handleSelectFacultad = (idFacultad) => {
+  //   setCarreras(facultades[idFacultad]["carreras"]);
+  // };
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -114,19 +117,23 @@ const CreateGroupPage = () => {
   });
 
   const onSubmit = async (groupData) => {
-    console.log(groupData, memberLimitChecked);
+    // console.log(groupData, memberLimitChecked);
 
-    groupData = { ...groupData, 
+    setCreating(true);
+    
+    groupData = {
+      ...groupData,
       ["maxMembers"]: memberLimitChecked ? parseInt(groupData["maxMembers"]) : null,
-      ["idCarrera"]: parseInt(groupData["idCarrera"]),
-      ["tags"]: ["none"],
-     };
-
+      // ["idCarrera"]: parseInt(groupData["idCarrera"]),
+      // ["tags"]: ["none"],
+    };
+    
     try {
       const response = await api.post("/groups", groupData);
       console.log(response);
-
+      
       if (response.status === 200) {
+        setCreating(false);
         navigate(`/group/${response.data.ulid}`);
       }
     } catch (error) {
@@ -170,7 +177,7 @@ const CreateGroupPage = () => {
                 />
               </div>
 
-              <div className="grid w-full items-center gap-1.5">
+              {/* <div className="grid w-full items-center gap-1.5">
                 <FormField
                   control={form.control}
                   name="facultad"
@@ -222,7 +229,7 @@ const CreateGroupPage = () => {
                     </FormItem>
                   )}
                 />
-              </div>
+              </div> */}
 
               <div className="grid w-full items-center gap-1.5">
                 <FormField
@@ -289,8 +296,14 @@ const CreateGroupPage = () => {
 
               <div className="w-full">
                 <Button className="w-full bg-gradient shadow" type="submit">
-                  <Plus />
-                  Crear
+                  {!creating ? (
+                    <>
+                      <Plus />
+                      Crear
+                    </>
+                  ) : (
+                    <l-ring size="20" stroke="3" bg-opacity="0" speed="2" color="gray"></l-ring>
+                  )}
                 </Button>
               </div>
             </form>

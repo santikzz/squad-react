@@ -14,8 +14,9 @@ import GroupPage from "@/pages/GroupPage";
 import GroupChatPage from "./pages/GroupChatPage";
 import CreateGroupPage from "@/pages/CreateGroupPage";
 import AboutPage from "./pages/AboutPage";
-import ReportPage from "./pages/ReportPage";
+import FeedbackPage from "./pages/FeedbackPage";
 import SettingsPage from "./pages/SettingsPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") || sessionStorage.getItem("token"));
@@ -34,8 +35,9 @@ function App() {
           <Route path="/create" element={<CreateGroupPage />} />
           <Route path="/user/:userId" element={<ProfilePage currentuser={currentuser}/>} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/report" element={<ReportPage />} />
+          <Route path="/report" element={<FeedbackPage />} />
           <Route path="/settings" element={<SettingsPage currentuser={currentuser} />} />
+          <Route path="/notifications" element={<NotificationsPage currentuser={currentuser} />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />
