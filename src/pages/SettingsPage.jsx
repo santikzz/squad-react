@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-import api from "@/components/services/Api";
+import api, { baseURL } from "@/components/services/Api";
 import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Utils";
 
 import Navbar from "@/components/Navbar";
@@ -39,9 +39,7 @@ const userdataSchema = z.object({
 
   about: z.string(),
 
-  idCarrera: z.string({
-    required_error: "Elije una carrera.",
-  }),
+  idCarrera: z.string().optional(),
 
 });
 
@@ -53,6 +51,9 @@ const SettingsPage = ({ currentuser }) => {
   const [userdata, setUserdata] = useState([]);
   const [facultades, setFacultades] = useState([]);
   const [carreras, setCarreras] = useState([]);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     const fetchFacultades = async () => {
@@ -76,13 +77,15 @@ const SettingsPage = ({ currentuser }) => {
         const response = await api.get("/user");
 
         if (response.status === 200) {
-          setUserdata(response.data);
+          setUserdata(response.data.data);
 
           userdataForm.reset({
             name: response.data.data.name,
             surname: response.data.data.surname,
             about: response.data.data.about,
           });
+
+          // localStorage.setItem("userdata", JSON.stringify(response.data.data));
 
           setLoading(false);
         }
@@ -106,13 +109,59 @@ const SettingsPage = ({ currentuser }) => {
       name: userdata.name,
       surname: userdata.surname,
       about: userdata.about,
-      idFacultad: 1,
+      idCarrera: null,
     },
   });
 
-  const handleConfigSubmit = async (step2userdata) => {
-    console.log("lol");
+  const handleSubmit = async (newUserdata) => {
+
+    try {
+
+      const response = await api.put(`/user`, newUserdata);
+      if (response.status == 200) {
+        window.location.reload();
+      }
+
+    } catch (error) {
+      console.error(error.message);
+    }
+
   };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleSubmitFile = async (event) => {
+    event.preventDefault();
+
+    if (selectedFile) {
+      console.log('uploading image');
+
+      const fileFormData = new FormData();
+      fileFormData.append('avatar', selectedFile);
+
+      try {
+        const imgResponse = await api.post('/user/avatar', fileFormData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          onUploadProgress: (ProgressEvent) => {
+            setUploadProgress(Math.round((ProgressEvent.loaded * 100) / ProgressEvent.total));
+          },
+        });
+
+        if (imgResponse.status == 200) {
+          window.location.reload();
+        }
+
+      } catch (error) {
+        console.error(error.message);
+      }
+
+    }
+
+  }
 
   return (
     <>
@@ -145,24 +194,30 @@ const SettingsPage = ({ currentuser }) => {
 
             <div className="flex flex-col w-full items-center gap-4">
               <Avatar className="w-24 h-24">
-                <AvatarImage src="" alt="profile" />
-                <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(currentuser.name, currentuser.surname)}</AvatarFallback>
+                <AvatarImage src={baseURL + userdata.profileImg} alt="profile" />
+                <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(userdata.name, userdata.surname)}</AvatarFallback>
               </Avatar>
 
-              <Input type="file" variant="outline" className="flex gap-1.5 items-center"/><ImageUp size="20" /> Subir Foto
+              <div className="flex flex-col gap-1.5">
+                <Label>Subir foto de perfil</Label>
+                <form onSubmit={handleSubmitFile} className="flex flex-row gap-2 w-full">
+                  <Input type="file" onChange={handleFileChange} variant="outline" className="flex gap-1.5 items-center" />
+                  <Button type="submit" className="flex flex-row gap-1.5"><ImageUp size="20" />Subir</Button>
+                </form>
+              </div>
+
             </div>
 
             <Form {...userdataForm}>
-              <form onSubmit={userdataForm.handleSubmit(handleConfigSubmit)} className="h-full flex flex-col justify-between">
+              <form onSubmit={userdataForm.handleSubmit(handleSubmit)} className="h-full flex flex-col justify-between">
                 <div className="w-full flex flex-col gap-3">
-
 
                   <FormField
                     control={userdataForm.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel></FormLabel>
+                        <FormLabel>Nombre</FormLabel>
                         <FormControl>
                           <Input placeholder="John" {...field} />
                         </FormControl>
@@ -176,7 +231,7 @@ const SettingsPage = ({ currentuser }) => {
                     name="surname"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel></FormLabel>
+                        <FormLabel>Apellido</FormLabel>
                         <FormControl>
                           <Input placeholder="Doe" {...field} />
                         </FormControl>
@@ -207,7 +262,7 @@ const SettingsPage = ({ currentuser }) => {
 
                   <FormField
                     control={userdataForm.control}
-                    name="idfacultad"
+                    name="idFacultad"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Facultad</FormLabel>
@@ -257,12 +312,14 @@ const SettingsPage = ({ currentuser }) => {
                   {error ? <Label className="text-center text-red-600">{error}</Label> : null}
                 </div>
 
+                <div className="flex flex-row w-full pt-6">
+                  <Button className="py-6 w-full text-base flex gap-1.5"><Save size="20" />Guardar</Button>
+                </div>
+
               </form>
             </Form>
 
-            <div className="flex flex-row w-full">
-              <Button className="py-6 w-full text-base flex gap-1.5"><Save size="20" />Guardar</Button>
-            </div>
+
 
           </div>
 

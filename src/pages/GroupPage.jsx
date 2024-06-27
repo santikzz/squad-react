@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 
-import api from "@/components/services/Api";
+import api, { baseURL } from "@/components/services/Api";
 import { UsernameAvatarFallout } from "@/components/services/Utils";
 
 import Navbar from "@/components/Navbar";
@@ -237,7 +237,7 @@ const GroupPage = ({ currentuser }) => {
           <div className="bg-black h-40 flex flex-col px-4 py-6 gap-4 shadow-lg">
             <div className="flex flex-row gap-2" onClick={() => handleMemberProfileClick(group.owner.ulid)}>
               <Avatar>
-                <AvatarImage src={group.owner.profileImg} alt="profile" />
+                <AvatarImage src={baseURL + group.owner.profileImg} alt="profile" />
                 <AvatarFallback>{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col mt-0">
@@ -316,7 +316,7 @@ const GroupPage = ({ currentuser }) => {
 
                     <div className="flex flex-row gap-2" onClick={() => handleMemberProfileClick(member.ulid)}>
                       <Avatar>
-                        <AvatarImage src={member.profileImg} alt="profile" />
+                        <AvatarImage src={baseURL + member.profileImg} alt="profile" />
                         <AvatarFallback>{UsernameAvatarFallout(member.name, member.surname)}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col justify-center mt-0">

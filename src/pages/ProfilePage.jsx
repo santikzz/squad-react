@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-import api from "@/components/services/Api";
+import api, { baseURL } from "@/components/services/Api";
 import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Utils";
 
 import Navbar from "@/components/Navbar";
@@ -75,7 +75,7 @@ const ProfilePage = ({ currentuser }) => {
             <SheetFooter className="w-full">
 
               <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5">
-                <Flag size="16"/>
+                <Flag size="16" />
                 Reportar usuario
               </Button>
             </SheetFooter>
@@ -93,7 +93,7 @@ const ProfilePage = ({ currentuser }) => {
           <div className="flex flex-col w-full items-center">
 
             <Avatar className="w-32 h-32">
-              <AvatarImage src={user.profileImg} alt="profile" />
+              <AvatarImage src={baseURL + user.profileImg} alt="profile" />
               <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(user.name, user.surname)}</AvatarFallback>
             </Avatar>
 

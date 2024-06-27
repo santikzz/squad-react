@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import api from "@/components/services/Api";
+import api, { baseURL } from "@/components/services/Api";
 import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Utils";
 
 import Navbar from "@/components/Navbar";
@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell, Home, SquarePlus } from "lucide-react";
+import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell, Home, SquarePlus, FlaskConical } from "lucide-react";
 
 import "../App.css";
 import assets from "@/Assets";
@@ -23,6 +23,8 @@ import assets from "@/Assets";
 import { Button } from "@/components/ui/button";
 
 const HomePage = ({ currentuser }) => {
+
+  const [userdata, setUserdata] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSerachQuery] = useState("");
   const [sidenavOpen, setSidenavOpen] = useState(false);
@@ -35,10 +37,48 @@ const HomePage = ({ currentuser }) => {
 
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userdataLoading, setUserdataLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   // const tags = ["cursada", "parcial", "final", "online", "presencial", "hibrido", "otro"];´
+
+  useEffect(() => {
+
+    const fetchUserdata = async () => {
+      try {
+        const response = await api.get("/user");
+        if (response.status === 200) {
+          setUserdata(response.data.data);
+          setUserdataLoading(false);
+        }
+
+      } catch (error) {
+
+        // janky expired or invalid token redirect to login
+        // until i find a better solution :/
+        if (error.response.status == 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userdata");
+          window.location.reload();
+        }
+        console.error(error);
+      }
+    }
+
+    const fetchNotificationsBadge = async () => {
+      try {
+        const response = await api.get(`/user/notifications`);
+        if (response.status === 200) {
+          setBadgeCount(response.data.badges);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+    fetchUserdata();
+    fetchNotificationsBadge();
+  }, [])
 
   useEffect(() => {
     // let controller = new AbortController();
@@ -84,20 +124,6 @@ const HomePage = ({ currentuser }) => {
     }
   }, [showSearch]);
 
-  useEffect(() => {
-    const fetchNotificationsBadge = async () => {
-      try {
-        const response = await api.get(`/user/notifications`);
-        if (response.status === 200) {
-          setBadgeCount(response.data.badges);
-        }
-      } catch (error) {
-        console.error(error.message);
-      }
-    }
-    fetchNotificationsBadge();
-  }, [])
-
   // const handleTagClick = (value) => {
   //   if (selectedTags.includes(value)) {
   //     setSelectedTags(selectedTags.filter((tag) => tag !== value));
@@ -142,6 +168,10 @@ const HomePage = ({ currentuser }) => {
     }
   };
 
+  if (userdataLoading) {
+    return <Loader />;
+  }
+
   return (
     <>
       <Navbar>
@@ -167,16 +197,16 @@ const HomePage = ({ currentuser }) => {
           <SheetHeader className="mt-12">
             <div className="flex flex-row gap-4 items-center mb-12">
               <Avatar>
-                <AvatarImage src={currentuser.profileImg} />
-                <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(currentuser.name, currentuser.surname)}</AvatarFallback>
+                <AvatarImage src={baseURL + userdata.profileImg} />
+                <AvatarFallback className="text-stone-900">{UsernameAvatarFallout(userdata.name, userdata.surname)}</AvatarFallback>
               </Avatar>
               <label className="text-white text-medium text-base text-wrap">
-                {currentuser.name} {currentuser.surname}
+                {userdata.name} {userdata.surname}
               </label>
             </div>
 
             <div className="flex flex-col gap-8">
-              <Link to={"/user/" + currentuser.ulid} className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
+              <Link to={"/user/" + userdata.ulid} className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500">
                 <UserRound className="w-6 mr-2" />
                 Pefil
               </Link>
@@ -192,6 +222,12 @@ const HomePage = ({ currentuser }) => {
                 <Plus className="w-6 mr-2" />
                 Nuevo grupo
               </button>
+
+              <Link to="/betainfo" className="flex flex-row justify-start items-center text-xl outline-none bg-transparent active:text-stone-500 mt-6">
+                <FlaskConical className="w-6 mr-2" />
+                BETA INFO
+              </Link>
+
             </div>
           </SheetHeader>
 
@@ -221,7 +257,7 @@ const HomePage = ({ currentuser }) => {
 
             <div className="flex flex-row items-center gap-2 h-full">
               <Avatar className="w-12 h-12">
-                <AvatarImage src={group.owner.profileImg} alt="profile" />
+                <AvatarImage src={baseURL + group.owner.profileImg} alt="profile" />
                 <AvatarFallback className="bg-stone-200">{UsernameAvatarFallout(group.owner.name, group.owner.surname)}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
@@ -263,7 +299,7 @@ const HomePage = ({ currentuser }) => {
       </div>
 
 
-      <BottomNav currentuser={currentuser} badgeCount={badgeCount}></BottomNav>
+      <BottomNav userdata={userdata} badgeCount={badgeCount}></BottomNav>
 
 
     </>

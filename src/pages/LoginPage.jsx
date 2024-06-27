@@ -123,7 +123,7 @@ const LoginPage = ({ isLoggedIn }) => {
         </div>
 
         <div className="fixed bottom-0 left-0 w-full flex justify-center pb-2">
-          <label className="text-gray-400" style={{fontFamily: "consolas"}}>squad beta release v.15.06.24</label>
+          <label className="text-gray-400" style={{fontFamily: "consolas"}}>BETA 0.24.06.27</label>
         </div>
 
       </div>

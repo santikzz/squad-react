@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-import api from "@/components/services/Api";
+import api, { baseURL } from "@/components/services/Api";
 import { UsernameAvatarFallout, FormatTimeAgo } from "@/components/services/Utils";
 
 import Navbar from "@/components/Navbar";
@@ -105,7 +105,7 @@ const NotificationsPage = ({ currentuser }) => {
             <div className="flex flex-row gap-4 justify-start items-center">
 
               <Avatar className="w-12 h-12">
-                <AvatarImage src="" alt="profile" />
+                <AvatarImage src={baseURL + request.user.profileImg} alt="profile" />
                 <AvatarFallback className="bg-stone-200">{UsernameAvatarFallout(request.user.name, request.user.surname)}</AvatarFallback>
               </Avatar>
 

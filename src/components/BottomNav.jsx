@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Settings, UserRound, Bell, BellDot, Home, SquarePlus } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 
-const BottomNav = ({ currentuser, badgeCount }) => {
+const BottomNav = ({ userdata, badgeCount }) => {
     return (
         <div className="fixed bottom-0 left-0 w-full bg-white border-t-[1px] lg:hidden">
 
@@ -32,7 +32,7 @@ const BottomNav = ({ currentuser, badgeCount }) => {
 
                 </Link>
 
-                <Link to={"/user/" + currentuser.ulid} className="active:brightness-50">
+                <Link to={"/user/" + userdata.ulid} className="active:brightness-50">
                     <UserRound size="20" strokeWidth="2" color="black"></UserRound>
                 </Link>
 
