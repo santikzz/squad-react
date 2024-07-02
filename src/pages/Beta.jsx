@@ -35,6 +35,7 @@ const Beta = () => {
                 <ul className="list-disc ml-4">
                     <li>Chat de grupo</li>
                     <li>Inicio de sesion por Google</li>
+                    <li>Feed LazyLoad</li>
                 </ul>
 
                 <Label className="font-semibold">[ Otros ]</Label>

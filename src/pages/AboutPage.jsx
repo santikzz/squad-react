@@ -33,7 +33,7 @@ const AboutPage = ({ currentuser }) => {
             Creado por: <br />
           </Label>
           <Label className="text-center text-xl">
-            Santiago Bugnón <br />y<br /> Ana Olivia Todesco
+            Santiago Bugnón
           </Label>
         </div>
       </div>

@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell, Home, SquarePlus, FlaskConical } from "lucide-react";
+import { Lock, LockOpen, Menu, Clock, Users, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell, Home, SquarePlus, FlaskConical, Ghost } from "lucide-react";
 
 import "../App.css";
 import assets from "@/Assets";
@@ -92,6 +92,7 @@ const HomePage = ({ currentuser }) => {
 
         const response = await api.get(`/groups?${searchQ}${pageN}`);
         if (response.status === 200) {
+          // setGroups(prevGroups => [...prevGroups, ...response.data.data]);
           setGroups(response.data.data);
           setLoading(false);
         }
@@ -124,17 +125,9 @@ const HomePage = ({ currentuser }) => {
     }
   }, [showSearch]);
 
-  // const handleTagClick = (value) => {
-  //   if (selectedTags.includes(value)) {
-  //     setSelectedTags(selectedTags.filter((tag) => tag !== value));
-  //   } else {
-  //     setSelectedTags([...selectedTags, value]);
-  //   };
-  // };
-
   // ==== lazy load feed ==== //
   // const handleScroll = () => {
-  //   if(window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight){
+  //   if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
   //     setPage(prev => prev + 1);
   //   }
   // };
@@ -249,6 +242,17 @@ const HomePage = ({ currentuser }) => {
       </Sheet>
 
       {loading ? <Loader /> : null}
+
+      {!loading && groups.length === 0 ? (
+        <div className="absolute inset-y-2/4 w-full flex items-center">
+
+          <div className="w-full flex flex-col items-center text-gray-300 px-8 gap-2">
+            <Ghost size="48" />
+            <Label className="text-2xl text-center font-medium">No hay grupos, crea uno nuevo</Label>
+          </div>
+
+        </div>
+      ) : null}
 
       <div className="h-screen flex flex-col p-4 gap-5 lg:grid lg:grid-cols-3 bg-slate-50">
         {groups.map((group, idx) => (
