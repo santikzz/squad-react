@@ -71,6 +71,15 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontFamily: {
+
+
+        'satoshi-regular': ['satoshi-regular', 'sans-serif'],
+        'satoshi-medium': ['satoshi-medium', 'sans-serif'],
+        'satoshi-bold': ['satoshi-bold', 'sans-serif'],
+        'satoshi-black': ['satoshi-black', 'sans-serif'],
+
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

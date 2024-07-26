@@ -1,15 +1,17 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-
-import Navbar from "@/components/Navbar";
-
+import { Link, useNavigate, Navigate } from "react-router-dom";
+import { Label } from "@radix-ui/react-label";
 import { ChevronLeft, FlaskConical } from "lucide-react";
 
+import { useGlobalContext } from "@/context/GlobalProvider";
+import Navbar from "@/components/Navbar";
 import "../App.css";
 import assets from "@/Assets";
-import { Label } from "@radix-ui/react-label";
 
 const Beta = () => {
+
+    const navigate = useNavigate();
+    const { isLoggedIn } = useGlobalContext();
+    if (!isLoggedIn) return (<Navigate to="/login" />);
 
     return (
         <>
@@ -22,7 +24,13 @@ const Beta = () => {
             </Navbar>
 
             <div className="flex flex-col gap-4 w-full p-4">
-                <Label className="text-lg font-bold text-center">[ BETA 0.24.06.27 ]</Label>
+                <Label className="text-lg font-bold text-center">[ BETA 0.24.07.02 ]</Label>
+
+                <Label className="font-semibold">[ CHANGELOG 2/7/24 ]</Label>
+                <ul className="list-disc ml-4">
+                    <li>Added: Editar Grupo</li>
+                    <li>Added: Notificaciones cuando un usuario se une y cuando tu solicitud es aceptada</li>
+                </ul>
 
                 <Label className="font-semibold">[ Cosas que aun no funcionan ]</Label>
                 <ul className="list-disc ml-4">

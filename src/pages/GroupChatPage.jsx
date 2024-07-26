@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 
-import Navbar from "@/components/Navbar";
-import Loader from "@/components/Loader";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { Square, ChevronLeft, SendHorizontal } from "lucide-react";
 
+import { useGlobalContext } from "@/context/GlobalProvider";
+import Navbar from "@/components/Navbar";
 import assets from "@/Assets";
-// import squadLogo from "/squad-logo-white.png";
 
 const GroupChatPage = () => {
   const { groupId } = useParams();
+  const { isLoggedIn } = useGlobalContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>

@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
-import api from "@/components/services/Api";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { LogIn, ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { ring } from "ldrs";
 
-import assets from "@/Assets";
+import { useGlobalContext } from "@/context/GlobalProvider";
+import { api } from "@/components/services/Api";
 
 const registerFormSchema = z
   .object({
@@ -59,14 +53,13 @@ const registerFormSchema = z
   });
 
 const RegisterPage = () => {
-  const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const [facultades, setFacultades] = useState([]);
   const [carreras, setCarreras] = useState([]);
-  // const [userdata, setUserdata] = useState();
   const [registerSuccess, setRegisterSuccess] = useState(false);
-  // const [formStyle, setFormStyle] = useState({ transition: "0.25s", transform: "translateX(0%)" });
+
+  const { isLoggedIn } = useGlobalContext();
 
   const navigate = useNavigate();
   ring.register();
@@ -76,77 +69,47 @@ const RegisterPage = () => {
   }, []);
 
   const fetchFacultades = async () => {
-    try {
-      const response = await api.get("/facultades");
-      if (response.status === 200) {
-        setFacultades(response.data);
-        setCarreras(response.data[0]["carreras"]);
-        // setLoading(false);
-      }
-    } catch (error) {
+    const { data, error } = await api.fetchFacultades();
+    if (data) {
+      setFacultades(data);
+      setCarreras(data[0]["carreras"]);
+    } else {
       console.error(error);
     }
   };
-
-  // const onSubmitStep1 = async (step1userdata) => {
-  //   // console.log(step1userdata);
-  //   setUserdata(step1userdata);
-
-  //   setFormStyle({ ...formStyle, transform: "translateX(-300%)" });
-  // };
-
-  // const onSubmitStep2 = async (step2userdata) => {
-  //   setLoading(true);
-  //   const data = { ...userdata, ["idCarrera"]: step2userdata["idCarrera"] };
-  //   try {
-  //     const response = await api.post("/register", userdata);
-  //     console.log(response);
-  //     if (response.status === 200) {
-  //       setLoading(false);
-  //       setRegisterSuccess(true);
-  //     }
-  //   } catch (error) {
-  //     setError("Lo sentimos, ha ocurrido un error, intentalo de nuevo mas tarde");
-  //     console.log(error);
-  //   }
-  // };
 
   const form = useForm({
     resolver: zodResolver(registerFormSchema)
   });
 
-  const onSubmit = async (data) => {
-    console.log(data);
-
+  const onSubmit = async (formData) => {
     setLoading(true);
-    try {
-      const response = await api.post("/register", data);
-      console.log(response);
-      if (response.status === 200) {
-        setLoading(false);
-        setRegisterSuccess(true);
-      }
-    } catch (error) {
+    const { data, error } = await api.register(formData);
+    if(data){
+      setLoading(false);
+      setRegisterSuccess(true);
+    }else{
       setError("Lo sentimos, ha ocurrido un error, intentalo de nuevo mas tarde");
-      console.log(error);
+      console.error(error);
     }
-
   }
 
   const handleSelectFacultad = (idFacultad) => {
     setCarreras(facultades[idFacultad]["carreras"]);
   };
 
+  if (isLoggedIn) return (<Navigate to="/" />);
+
   return (
     <>
       <AlertDialog open={registerSuccess}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¡Felicidades!</AlertDialogTitle>
-            <AlertDialogDescription>Ya tienes tu cuenta de SQUAD</AlertDialogDescription>
+            <AlertDialogTitle className="font-satoshi-bold">¡Felicidades!</AlertDialogTitle>
+            <AlertDialogDescription className="font-satoshi-medium">Ya tienes tu cuenta de SQUAD</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => navigate("/login")}>Iniciar Sesion</AlertDialogAction>
+            <AlertDialogAction className="font-satoshi-bold" onClick={() => navigate("/login")}>Iniciar Sesion</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -154,8 +117,8 @@ const RegisterPage = () => {
       <div className="login-form h-screen w-full flex flex-col">
 
         <div className="flex flex-col items-center justify-center pt-20 pb-4 gap-2">
-          <Label className="text-4xl">Crea tu cuenta</Label>
-          <Link to="/login" className="text-blue-500">o Iniciar Sesion</Link>
+          <Label className="text-4xl font-satoshi-bold">Crea tu cuenta</Label>
+          <Link to="/login" className="text-blue-500 font-satoshi-medium">o Iniciar Sesion</Link>
         </div>
 
         <div className="w-full h-full flex justify-center px-6">
@@ -168,9 +131,9 @@ const RegisterPage = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="font-satoshi-bold">Email</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} />
+                      <Input className="font-satoshi-medium" type="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -182,9 +145,9 @@ const RegisterPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nombre</FormLabel>
+                    <FormLabel className="font-satoshi-bold">Nombre</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input className="font-satoshi-medium" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -196,9 +159,9 @@ const RegisterPage = () => {
                 name="surname"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Apellido</FormLabel>
+                    <FormLabel className="font-satoshi-bold">Apellido</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input className="font-satoshi-medium" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -210,9 +173,9 @@ const RegisterPage = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contraseña</FormLabel>
+                    <FormLabel className="font-satoshi-bold">Contraseña</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input className="font-satoshi-medium" type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -224,9 +187,9 @@ const RegisterPage = () => {
                 name="password_confirmation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Repita la contraseña</FormLabel>
+                    <FormLabel className="font-satoshi-bold">Repita la contraseña</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input className="font-satoshi-medium" type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -239,16 +202,16 @@ const RegisterPage = () => {
                 name="id_facultad"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Facultad</FormLabel>
+                    <FormLabel className="font-satoshi-bold">Facultad</FormLabel>
                     <Select onValueChange={handleSelectFacultad} defaultValue="">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una facultad" />
+                          <SelectValue className="font-satoshi-medium" placeholder="Selecciona una facultad" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {facultades.map((facultad, idx) => (
-                          <SelectItem key={idx} value={idx.toString()}>
+                          <SelectItem className="font-satoshi-medium" key={idx} value={idx.toString()}>
                             {facultad.name}
                           </SelectItem>
                         ))}
@@ -264,16 +227,16 @@ const RegisterPage = () => {
                 name="idCarrera"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Carrera</FormLabel>
+                    <FormLabel className="font-satoshi-bold">Carrera</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue="">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una carrera" />
+                          <SelectValue className="font-satoshi-medium" placeholder="Selecciona una carrera" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {carreras.map((carrera) => (
-                          <SelectItem key={carrera.id} value={carrera.id.toString()}>
+                          <SelectItem className="font-satoshi-medium" key={carrera.id} value={carrera.id.toString()}>
                             {carrera.name}
                           </SelectItem>
                         ))}
@@ -284,7 +247,7 @@ const RegisterPage = () => {
                 )}
               />
 
-              <Button type="submit" className={`h-[50px] shadow-sm w-full flex gap-1 ${loading ? "brightness-80" : null}`}>
+              <Button type="submit" className={`h-[50px] shadow-sm w-full flex gap-1 font-satoshi-bold ${loading ? "brightness-80" : null}`}>
                 {!loading ? (
                   <>
                     Registrarse
@@ -298,13 +261,9 @@ const RegisterPage = () => {
             </form>
           </Form>
 
-
         </div>
 
-
-
       </div>
-
 
     </>
   );

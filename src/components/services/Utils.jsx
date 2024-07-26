@@ -1,8 +1,9 @@
 // import React from 'react'
 
-const UsernameAvatarFallout = (strA, strB) => {
-  return strA.charAt(0).toUpperCase() + strB.charAt(0).toUpperCase();
-};
+// const UsernameAvatarFallback = (strA, strB) => {
+//   // return strA.charAt(0).toUpperCase() + strB.charAt(0).toUpperCase();
+//   return "XY";
+// };
 
 const FormatTimeAgo = (timestamp) => {
   const date = new Date(timestamp);
@@ -32,4 +33,11 @@ const FormatTimeAgo = (timestamp) => {
   return "Hace " + Math.floor(seconds) + " segundos";
 };
 
-export { UsernameAvatarFallout, FormatTimeAgo };
+const trimString = (str, maxLength) => {
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return str.substring(0, maxLength) + '...';
+}
+
+export { FormatTimeAgo, trimString };

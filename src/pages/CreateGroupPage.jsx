@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-
-import api from "@/components/services/Api";
-
-import Navbar from "@/components/Navbar";
-import Loader from "@/components/Loader";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useNavigate, Link, Navigate } from "react-router-dom";
+import { useForm, Controller } from 'react-hook-form';
 
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -16,13 +8,19 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-
 import { Square, Lock, LockOpen, ChevronLeft, Plus } from "lucide-react";
 import { ring } from "ldrs";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
+import Navbar from "@/components/Navbar";
+import Loader from "@/components/Loader";
+import BottomNav from "@/components/BottomNav";
+import { api } from "@/components/services/Api";
+import { useGlobalContext } from "@/context/GlobalProvider";
 import assets from "@/Assets";
-// import squadLogo from "/squad-logo-white.png";
+import InputNumber from "@/components/InputNumber";
+import OptionSwitch from "@/components/OptionSwitch";
 
 const FormSchema = z.object({
   title: z
@@ -32,12 +30,6 @@ const FormSchema = z.object({
     .min(12, {
       message: "Titulo debe tener al menos 12 caracteres.",
     }),
-  // facultad: z.string({
-  //   required_error: "Elije una facultad.",
-  // }),
-  // idCarrera: z.string({
-  //   required_error: "Elije una carrera.",
-  // }),
   description: z
     .string({
       required_error: "Escribe una descripcion.",
@@ -45,101 +37,54 @@ const FormSchema = z.object({
     .min(12, {
       message: "Descripcion debe tener al menos 12 caracteres.",
     }),
-  privacy: z.string({
-    required_error: "Elije un modo de privacidad",
-  }),
-  maxMembers: z.string().optional(),
+  privacy: z.string(),
+  maxMembers: z.number().min(0).max(20),
 });
 
 const CreateGroupPage = () => {
-  // const [groupData, setGroupData] = useState({
-  //   title: "",
-  //   description: "",
-  //   privacy: "open",
-  //   maxMembers: 0,
-  //   idCarrera: 0,
-  //   tags: ["none"], // temporarely voided
-  // });
 
-  // const [facultades, setFacultades] = useState([]);
-  // const [selectedFacultad, setSelectedFacultad] = useState(0);
-  // const [carreras, setCarreras] = useState([]);
-  const [memberLimitChecked, setMemberLimitChecked] = useState(false);
+  const [environment, setEnvironment] = useState(null);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
 
+  const { isLoggedIn } = useGlobalContext();
   const navigate = useNavigate();
   ring.register();
 
-  // useEffect(() => {
-  //   const fetchFacultades = async () => {
-  //     try {
-  //       const response = await api.get("/facultades");
+  const fetchEnvironment = async () => {
+    const { data, error } = await api.fetchEnvironment()
+    if (data) {
+      setEnvironment(data);
+    }
+    setLoading(false);
+  }
 
-  //       // console.log(response);
-
-  //       if (response.status === 200) {
-  //         setFacultades(response.data);
-  //         setCarreras(response.data[0]["carreras"]);
-  //         setLoading(false);
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-  //   fetchFacultades();
-  // }, []);
-
-  // const handleChange = (event) => {
-  //   const { name, value } = event.target;
-  //   setGroupData((prevData) => ({ ...prevData, [name]: value }));
-  // };
-
-  // const handleTagChange = (newTags) => {
-  //   setGroupData((prevData) => ({
-  //     ...prevData,
-  //     tags: newTags,
-  //   }));
-  // };
-
-  // const handleSelectFacultad = (idFacultad) => {
-  //   setCarreras(facultades[idFacultad]["carreras"]);
-  // };
+  useEffect(() => {
+    fetchEnvironment();
+  }, []);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      // title: "",
-      // description: "",
-      // privacy: "",
-      // maxMembers: 2,
+      maxMembers: 0,
+      privacy: 'open'
     },
   });
 
-  const onSubmit = async (groupData) => {
-    // console.log(groupData, memberLimitChecked);
-
-    setCreating(true);
-    
-    groupData = {
-      ...groupData,
-      ["maxMembers"]: memberLimitChecked ? parseInt(groupData["maxMembers"]) : null,
-      // ["idCarrera"]: parseInt(groupData["idCarrera"]),
-      // ["tags"]: ["none"],
-    };
-    
-    try {
-      const response = await api.post("/groups", groupData);
-      console.log(response);
-      
-      if (response.status === 200) {
-        setCreating(false);
-        navigate(`/group/${response.data.ulid}`);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const onSubmit = async (formData) => {
+    // setCreating(true);
+    // const { data, error } = await api.createGroup(formData)
+    // if (data) {
+    //   setCreating(false);
+    //   navigate(`/group/${data.ulid}`);
+    // } else {
+    //   console.log(error);
+    // }
+    console.log(formData);
   };
+
+  if (!isLoggedIn) return (<Navigate to="/login" />);
+  if (!environment) return (<Loader />);
 
   return (
     <>
@@ -156,20 +101,20 @@ const CreateGroupPage = () => {
       ) : (
         <>
           <div className="w-full flex justify-center pt-5">
-            <Label className="text-xl">Nuevo grupo</Label>
+            <Label className="text-2xl font-satoshi-bold">Nuevo grupo</Label>
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 gap-7 lg:mx-[33%]">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 gap-4 lg:mx-[33%]">
               <div className="grid w-full items-center gap-1.5">
                 <FormField
                   control={form.control}
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Titulo</FormLabel>
+                      <FormLabel className="font-satoshi-bold text-base">Titulo</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input className="font-satoshi-medium text-base" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -177,69 +122,15 @@ const CreateGroupPage = () => {
                 />
               </div>
 
-              {/* <div className="grid w-full items-center gap-1.5">
-                <FormField
-                  control={form.control}
-                  name="facultad"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Facultad</FormLabel>
-                      <Select onValueChange={handleSelectFacultad} value={field.value} defaultValue="">
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {facultades.map((facultad, idx) => (
-                            <SelectItem key={idx} value={idx.toString()}>
-                              {facultad.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid w-full items-center gap-1.5">
-                <FormField
-                  control={form.control}
-                  name="idCarrera"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Carrera</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value} defaultValue="">
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {carreras.map((carrera) => (
-                            <SelectItem key={carrera.id} value={carrera.id.toString()}>
-                              {carrera.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div> */}
-
               <div className="grid w-full items-center gap-1.5">
                 <FormField
                   control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Descripcion</FormLabel>
+                      <FormLabel className="font-satoshi-bold text-base">Descripcion</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="busco grupo de estudio para..." className="resize-none" {...field} />
+                        <Textarea placeholder="busco grupo de estudio para..." className="resize-none font-satoshi-medium text-base" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -253,49 +144,62 @@ const CreateGroupPage = () => {
                   name="privacy"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Privacidad</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value} defaultValue="">
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="--" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="open">Grupo abierto</SelectItem>
-                          <SelectItem value="closed">Grupo cerrado</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <FormLabel className="font-satoshi-bold text-base">Privacidad</FormLabel>
+                      <FormControl>
+                        <Controller
+                          name="privacy"
+                          control={form.control}
+                          render={({ field }) => (
+                            <OptionSwitch
+                              value={field.value}
+                              onChange={field.onChange}
+                              optionA='open'
+                              optionB='closed'
+                            />
+                          )}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
-              <div className="flex items-center space-x-2">
+              {/* <OptionSwitch></OptionSwitch> */}
+              {/* <div className="flex items-center space-x-2">
                 <Switch checked={memberLimitChecked} onCheckedChange={setMemberLimitChecked} />
                 <Label>Limitar miembros</Label>
+              </div> */}
+
+              <div className={`grid w-full items-center gap-1.5 `}>
+                <FormField
+                  control={form.control}
+                  name="maxMembers"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-satoshi-bold text-base">Limite de miembros</FormLabel>
+                      <FormControl>
+                        <Controller
+                          name="maxMembers"
+                          control={form.control}
+                          render={({ field }) => (
+                            <InputNumber
+                              value={field.value}
+                              onChange={field.onChange}
+                              min={0}
+                              max={100}
+                            />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              {memberLimitChecked ? (
-                <div className={`grid w-full items-center gap-1.5 ${!memberLimitChecked ? "hidden" : null}`}>
-                  <FormField
-                    control={form.control}
-                    name="maxMembers"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Limite</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              ) : null}
-
-              <div className="w-full">
-                <Button className="w-full bg-gradient shadow" type="submit">
+              <div className="w-full mt-16">
+                <Button className="w-full bg-gradient shadow font-satoshi-bold text-base h-12" type="submit">
                   {!creating ? (
                     <>
                       <Plus />
@@ -308,6 +212,7 @@ const CreateGroupPage = () => {
               </div>
             </form>
           </Form>
+          <BottomNav environment={environment}></BottomNav>
         </>
       )}
     </>

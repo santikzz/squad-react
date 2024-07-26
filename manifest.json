@@ -8,14 +8,14 @@
   "start_url": "/",
   "icons": [
     {
-      "src": "static/squad-icon-512-transparent.png",
+      "src": "static/squad-icon-512-transparent.webp",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/webp"
     },
     {
-      "src": "static/squad-icon-512-maskable.png",
+      "src": "static/squad-icon-512-maskable.webp",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/webp",
       "purpose": "maskable"
     }
   ]

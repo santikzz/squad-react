@@ -1,0 +1,16 @@
+@font-face {
+    font-family: 'satoshi-regular';
+    src: url('/fonts/Satoshi-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'satoshi-medium';
+    src: url('/fonts/Satoshi-Medium.ttf') format('truetype');
+}
+@font-face {
+    src: url('/fonts/Satoshi-Bold.ttf') format('truetype');
+    font-family: 'satoshi-bold';
+}
+@font-face {
+    font-family: 'satoshi-black';
+    src: url('/fonts/Satoshi-Black.ttf') format('truetype');
+}
