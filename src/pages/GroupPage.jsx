@@ -123,7 +123,6 @@ const GroupPage = () => {
         <Link to="/" className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={assets.logo1_white} className="h-full"></img>
         <EllipsisVertical size="32" onClick={() => setOptionsNav(true)} />
       </Navbar>
 
@@ -161,7 +160,7 @@ const GroupPage = () => {
       {!group ? <Loader /> : null}
 
       {group ? (
-        <>
+        <div className="pb-[100px]">
           <Drawer open={leaveGroupDrawer} onOpenChange={setLeaveGroupDrawer}>
             <DrawerContent>
               <DrawerHeader>
@@ -340,7 +339,7 @@ const GroupPage = () => {
             </div>
 
           </div>
-        </>
+        </div>
       ) : null}
       <BottomNav environment={environment}></BottomNav>
     </>

@@ -21,7 +21,7 @@ const AboutPage = () => {
       </Navbar>
       <div className="h-screen absolute top-0 flex flex-col justify-between px-4 pt-24 pb-10">
         <div className="flex flex-col">
-          <img src={assets.logo1_black} className="w-64" />
+          {/* <img src={assets.logo2_gradient} className="w-64" /> */}
           <Label className="text-justify text-lg p-3 font-satoshi-medium text-gray-900">SQUAD es una plataforma integral en línea diseñada para facilitar la colaboración fluida entre los estudiantes, al proporcionar una solución centralizada para encontrar grupos de estudio. Creada pensando en la eficiencia, esta aplicación integra todas las funcionalidades necesarias en una única interfaz. Los estudiantes pueden crear fácilmente perfiles de usuario, formar y buscar grupos, y unirse a ellos, con la capacidad de filtrar por facultad, carrera, clase, exámenes o cualquier otro criterio relevante.</Label>
         </div>
         <div className="flex flex-col items-center">

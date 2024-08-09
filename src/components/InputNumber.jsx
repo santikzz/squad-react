@@ -24,12 +24,12 @@ const InputNumber = ({ value, onChange, min = 0, max = 100 }) => {
 
 
     return (
-        <div className="w-full border-[0.5px] border-gray-200 rounded-md flex flex-row justify-between items-center">
+        <div className="w-full border-[1px] border-gray-200 rounded-md flex flex-row justify-between items-center">
 
             <button
                 type="button"
                 onClick={handleDecrement}
-                className="py-3 px-6 border-r-[0.5px] border-gray-200 rounded-l-md bg-gray-100 active:bg-gray-300 transition-bg duration-200 ease-out"
+                className="py-3 px-6 border-r-[1px] border-gray-200 rounded-l-md bg-gray-100 active:bg-gray-300 transition-bg duration-200 ease-out"
             >
                 <Minus size={16} />
             </button>
@@ -47,7 +47,7 @@ const InputNumber = ({ value, onChange, min = 0, max = 100 }) => {
             <button
                 type="button"
                 onClick={handleIncrement}
-                className="py-3 px-6 border-l-[0.5px] border-gray-200 rounded-r-md bg-gray-100 active:bg-gray-300 transition-bg duration-200 ease-out"
+                className="py-3 px-6 border-l-[1px] border-gray-200 rounded-r-md bg-gray-100 active:bg-gray-300 transition-bg duration-200 ease-out"
             >
                 <Plus size={16} />
             </button>

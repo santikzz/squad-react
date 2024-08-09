@@ -19,7 +19,7 @@ const GroupCard = ({ group }) => {
             onClick={() => navigate(`/group/${group.ulid}`)}
         >
 
-            <div className="flex flex-row items-center gap-2 h-full p-3 bg-gray-100 rounded-t-xl">
+            <div className="flex flex-row items-center gap-2 p-3 bg-gray-100 rounded-t-xl">
                 <Avatar className="w-14 h-14">
                     <AvatarImage src={api.API_URL + group.owner.avatar} alt="profile" />
                     <AvatarFallback className="bg-gray-200 border-[1px] border-gray-400">{group.owner.avatarFallback}</AvatarFallback>
@@ -42,7 +42,7 @@ const GroupCard = ({ group }) => {
 
             <div className="w-full h-[0.5px] bg-gray-300"></div>
 
-            <div className="flex flex-col p-3 gap-1">
+            <div className="flex flex-col p-3 gap-1 h-full">
                 <Label className="text-lg font-satoshi-bold">{group.title}</Label>
                 <p className="text-base font-satoshi-medium text-gray-800">{trimString(group.description, 100)}</p>
             </div>

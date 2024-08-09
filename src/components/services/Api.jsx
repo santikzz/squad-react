@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useRedirect } from "@/context/RedirectProvider";
 
 const API_URL = "http://squad-api.ddns.net/";
 
@@ -9,15 +10,18 @@ const axiosApi = axios.create({
   },
 });
 
-// axiosApi.interceptors.response.use(
-//   response => response,
-//   async error => {
-//     if (error.response.status === 401) {
-//       localStorage.removeItem('token');
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+axiosApi.interceptors.response.use(
+  response => response,
+  async error => {
+    if (error.response.status === 401) {
+      localStorage.removeItem('token');
+      const redirect = useRedirect();
+      redirect('/login');
+      // window.location.replace('/');
+    }
+    return Promise.reject(error);
+  }
+);
 
 const setAuthToken = (token) => {
   if (token) {
@@ -247,9 +251,31 @@ const createGroup = async (formData) => {
   }
 }
 
-const sendFeedback = async ( message ) => {
+const sendFeedback = async (message) => {
   try {
     const response = await axiosApi.post('/feedback', message);
+    if (response.status === 200) {
+      return { data: response.data, error: null };
+    }
+  } catch (error) {
+    return { data: null, error: error.response.data.error }
+  }
+}
+
+const fetchJoinedGroups = async () => {
+  try {
+    const response = await axiosApi.get('/user/joined');
+    if (response.status === 200) {
+      return { data: response.data, error: null };
+    }
+  } catch (error) {
+    return { data: null, error: error.response.data.error }
+  }
+}
+
+const fetchOwnedGroups = async () => {
+  try {
+    const response = await axiosApi.get('/user/groups');
     if (response.status === 200) {
       return { data: response.data, error: null };
     }
@@ -273,6 +299,8 @@ export const api = {
   fetchGroupRequests,
   fetchNotifications,
   fetchFacultades,
+  fetchJoinedGroups,
+  fetchOwnedGroups,
   handleJoinRequest,
   handleDeleteNotification,
   handleJoinGroup,

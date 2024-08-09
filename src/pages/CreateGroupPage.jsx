@@ -72,19 +72,18 @@ const CreateGroupPage = () => {
   });
 
   const onSubmit = async (formData) => {
-    // setCreating(true);
-    // const { data, error } = await api.createGroup(formData)
-    // if (data) {
-    //   setCreating(false);
-    //   navigate(`/group/${data.ulid}`);
-    // } else {
-    //   console.log(error);
-    // }
-    console.log(formData);
+    setCreating(true);
+    const { data, error } = await api.createGroup(formData)
+    if (data) {
+      setCreating(false);
+      navigate(`/group/${data.ulid}`);
+    } else {
+      console.log(error);
+    }
+    // console.log(formData);
   };
 
   if (!isLoggedIn) return (<Navigate to="/login" />);
-  if (!environment) return (<Loader />);
 
   return (
     <>
@@ -92,13 +91,9 @@ const CreateGroupPage = () => {
         <Link to="/" className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={assets.logo1_white} className="h-full"></img>
-        <Square color="transparent" />
       </Navbar>
 
-      {loading ? (
-        <Loader />
-      ) : (
+      {!environment ? (<Loader />) : (
         <>
           <div className="w-full flex justify-center pt-5">
             <Label className="text-2xl font-satoshi-bold">Nuevo grupo</Label>
@@ -187,7 +182,7 @@ const CreateGroupPage = () => {
                               value={field.value}
                               onChange={field.onChange}
                               min={0}
-                              max={100}
+                              max={20}
                             />
                           )}
                         />
@@ -212,9 +207,8 @@ const CreateGroupPage = () => {
               </div>
             </form>
           </Form>
-          <BottomNav environment={environment}></BottomNav>
-        </>
-      )}
+        </>)}
+      <BottomNav environment={environment}></BottomNav>
     </>
   );
 };

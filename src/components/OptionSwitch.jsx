@@ -21,7 +21,7 @@ const OptionSwitch = ({ value, onChange, optionA, optionB }) => {
     };
 
     return (
-        <div className="relative w-full border-[0.5px] border-gray-200 rounded-md flex flex-row">
+        <div className="relative w-full border-[1px] border-gray-200 rounded-md flex flex-row">
             <button
                 type="button"
                 onClick={selectOptionA}

@@ -1,11 +1,10 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Square, ChevronLeft, Settings, Save, ImageUp } from "lucide-react";
@@ -36,29 +35,15 @@ const userdataSchema = z.object({
 const SettingsPage = () => {
 
   const [environment, setEnvironment] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [userdata, setUserdata] = useState([]);
-  // const [facultades, setFacultades] = useState([]);
-  // const [carreras, setCarreras] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [error, setError] = useState(false);
   const { isLoggedIn } = useGlobalContext();
-  const navigate = useNavigate();
 
-  // const fetchFacultades = async () => {
-  //   const { data, error } = await api.fetchFacultades();
-  //   if (data) {
-  //     setFacultades(data);
-  //     setCarreras(data[0]["carreras"]);
-  //   }
-  // };
   const fetchEnvironment = async () => {
     const { data, error } = await api.fetchEnvironment()
     if (data) {
       setEnvironment(data);
     }
-    setLoading(false);
   }
 
   const fetchUserdata = async () => {
@@ -73,7 +58,6 @@ const SettingsPage = () => {
         // idCarrera: data.idCarrera,
       });
     }
-    setLoading(false);
   }
 
   useEffect(() => {
@@ -122,7 +106,6 @@ const SettingsPage = () => {
   });
 
   if (!isLoggedIn) return (<Navigate to="/login" />);
-  if (!environment) return (<Loader />);
 
   return (
     <>
@@ -130,11 +113,9 @@ const SettingsPage = () => {
         <Link to="/">
           <ChevronLeft size="32" strokeWidth="2" />
         </Link>
-        <img src={assets.logo1_white} className="h-full" />
-        <Square color="transparent" />
       </Navbar>
 
-      {(!userdata) ? <Loader /> : (
+      {(!environment || !userdata) ? <Loader /> : (
 
         <div className="h-screen w-full flex flex-col p-4">
 
@@ -264,7 +245,6 @@ const SettingsPage = () => {
                       </FormItem>
                     )}
                   /> */}
-                  {error ? <Label className="text-center text-red-600 font-satoshi-bold">{error}</Label> : null}
                 </div>
 
                 <div className="flex flex-row w-full pt-6">

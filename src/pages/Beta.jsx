@@ -19,7 +19,6 @@ const Beta = () => {
                 <Link to="/">
                     <ChevronLeft size="32" strokeWidth="2" />
                 </Link>
-                <img src={assets.logo1_white} className="h-full" />
                 <FlaskConical size="32" strokeWidth="2" />
             </Navbar>
 

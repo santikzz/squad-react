@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Square, Lock, LockOpen, ChevronLeft, Plus } from "lucide-react";
+import { Square, ChevronLeft, Pencil } from "lucide-react";
 import { ring } from "ldrs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from 'react-hook-form';
@@ -47,8 +46,6 @@ const EditGroupPage = () => {
     const { groupId } = useParams();
     const [environment, setEnvironment] = useState(null);
     const [group, setGroup] = useState(null);
-    const [memberLimitChecked, setMemberLimitChecked] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [creating, setCreating] = useState(false);
 
     const { isLoggedIn } = useGlobalContext();
@@ -60,12 +57,9 @@ const EditGroupPage = () => {
         if (data) {
             setEnvironment(data);
         }
-        setLoading(false);
     }
 
-
     const fetchGroupData = async () => {
-
         const { data, error } = await api.fetchGroup(groupId)
         if (data) {
             setGroup(data);
@@ -78,7 +72,6 @@ const EditGroupPage = () => {
         } else {
             console.log(error);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -109,7 +102,6 @@ const EditGroupPage = () => {
     };
 
     if (!isLoggedIn) return (<Navigate to="/login" />);
-    if (!environment || !group) return (<Loader />);
 
     return (
         <>
@@ -117,11 +109,9 @@ const EditGroupPage = () => {
                 <Link to="/" className="active:brightness-75">
                     <ChevronLeft size="32" />
                 </Link>
-                <img src={assets.logo1_white} className="h-full"></img>
-                <Square color="transparent" />
             </Navbar>
 
-            {loading ? (
+            {(!environment || !group) ? (
                 <Loader />
             ) : (
                 <>
@@ -207,7 +197,7 @@ const EditGroupPage = () => {
                                                             value={field.value}
                                                             onChange={field.onChange}
                                                             min={0}
-                                                            max={100}
+                                                            max={20}
                                                         />
                                                     )}
                                                 />
@@ -223,8 +213,8 @@ const EditGroupPage = () => {
                                 <Button className="w-full bg-gradient shadow font-satoshi-bold text-base h-12" type="submit">
                                     {!creating ? (
                                         <>
-                                            <Plus />
-                                            Editar
+                                            <Pencil />
+                                            Guardar
                                         </>
                                     ) : (
                                         <l-ring size="20" stroke="3" bg-opacity="0" speed="2" color="gray"></l-ring>

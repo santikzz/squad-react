@@ -58,8 +58,6 @@ const FeedbackPage = () => {
         <Link to="/">
           <ChevronLeft size="32" strokeWidth="2" />
         </Link>
-        <img src={assets.logo1_white} className="h-full" />
-        <Square color="transparent" />
       </Navbar>
 
       <AlertDialog open={sendSuccess}>

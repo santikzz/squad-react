@@ -54,7 +54,6 @@ const ProfilePage = () => {
         <Link to="/" className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={assets.logo1_white} className="h-full"></img>
         <EllipsisVertical size="32" onClick={() => setUserOptions(true)} />
       </Navbar>
 

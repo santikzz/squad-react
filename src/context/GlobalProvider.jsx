@@ -28,7 +28,7 @@ const GlobalProvider = ({ children }) => {
         }
 
         const token = localStorage.getItem("token");
-        if (token) {
+        if (token != null) {
             api.setAuthToken(token);
             setIsLoggedIn(true);
         }
@@ -38,7 +38,7 @@ const GlobalProvider = ({ children }) => {
     }, []);
 
 
-    if (!isStandalone) return (<Welcome />);
+    // if (!isStandalone) return (<Welcome />);
     if (loading) return (<Loader />);
 
     return (

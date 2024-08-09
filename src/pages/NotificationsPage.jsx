@@ -65,7 +65,6 @@ const NotificationsPage = () => {
     }
   }
 
-  if (!environment) return (<Loader />);
   if (!isLoggedIn) return (<Navigate to="/login" />);
 
   return (
@@ -74,13 +73,9 @@ const NotificationsPage = () => {
         <Link to="/" className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={assets.logo1_white} className="h-full"></img>
-        <Square color="transparent" />
       </Navbar>
 
-      {!joinRequests || !notifications ? (
-        <Loader />
-      ) : (
+      {(!environment || !joinRequests || !notifications) ? (<Loader />) : (
         <>
           {joinRequests.length === 0 && notifications.length === 0 ? (
             <div className="absolute inset-y-2/4 w-full flex items-center">
@@ -91,9 +86,9 @@ const NotificationsPage = () => {
             </div>
           ) : null}
 
-          <div className="flex flex-col pt-8 p-4 gap-4 justify-start">
+          <div className="flex flex-col pt-8 p-4 gap-4 justify-start lg:items-center">
             {joinRequests.map((request, idx) => (
-              <Card className="flex flex-col shadow" key={request.requestId}>
+              <Card className="flex flex-col shadow lg:w-100" key={request.requestId}>
 
                 <div className="flex flex-row p-3 gap-3 justify-start items-center">
                   <Avatar className="w-14 h-14">
@@ -121,7 +116,7 @@ const NotificationsPage = () => {
             ))}
 
             {notifications.map((notif, idx) => (
-              <Card className="flex p-3 gap-3 shadow-md" key={notif.id}>
+              <Card className="flex p-3 gap-3 shadow-md lg:w-100" key={notif.id}>
                 <div className="flex flex-row gap-4 justify-start items-center">
                   <div className="flex flex-col gap-1.5">
                     <Label className="flex gap-1 items-center text-gray-400 text-sm font-satoshi-medium">

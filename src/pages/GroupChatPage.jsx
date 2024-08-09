@@ -27,8 +27,6 @@ const GroupChatPage = () => {
         <Link to={`/group/${groupId}`} className="active:brightness-75">
           <ChevronLeft size="32" />
         </Link>
-        <img src={assets.logo1_white} className="h-full"></img>
-        <Square color="transparent" />
       </Navbar>
 
       <div className="w-full flex flex-col justify-between p-2 gap-2">

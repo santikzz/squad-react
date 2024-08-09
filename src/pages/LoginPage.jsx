@@ -42,11 +42,11 @@ const LoginPage = () => {
   if (isLoggedIn) return (<Navigate to="/" />);
 
   return (
-    <div className="login-form h-screen w-full flex flex-col justify-center items-center bg-gray">
+    <div className="login-form h-screen w-full flex flex-col pt-[33%] items-center bg-gray">
 
       <div className="w-96 flex flex-col justify-center items-center">
 
-        <div className="w-32 flex justify-center">
+        <div className="w-40 flex justify-center">
           <img src={assets.splash_black} className="drop-shadow-md"></img>
         </div>
 
@@ -94,11 +94,15 @@ const LoginPage = () => {
             )}
           </Button>
 
+          <Link className="text-blue-500 text-base font-satoshi-medium " href="#">
+            Olvidaste tu contraseña?
+          </Link>
+          {/* 
           <Label className="">o</Label>
 
           <Button variant="outline" className="flex flex-row w-full gap-1.5 text-base items-center font-satoshi-bold">
             <img src={assets.icon_google} className="w-[20px]"></img>Continuar con Google
-          </Button>
+          </Button> */}
 
         </div>
 
@@ -106,8 +110,8 @@ const LoginPage = () => {
           <Label className="text-base font-satoshi-medium">¿Aun no tienes una cuenta? <Link className="text-blue-400 ml-1" to="/register">Registrate</Link> </Label>
         </div>
 
-        <div className="fixed bottom-0 left-0 w-full flex justify-center pb-2">
-          <label className="text-gray-400" style={{ fontFamily: "consolas" }}>BETA 0.24.06.27</label>
+        <div className="fixed bottom-0 left-0 w-full flex justify-center pb-4">
+          <label className="text-gray-400 font-satoshi-regular">BETA 0.24.06.27</label>
         </div>
 
       </div>
