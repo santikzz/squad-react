@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImage: {
+        'gradient': 'linear-gradient(71deg, rgba(19, 149, 186, 1) 0%, rgba(21, 183, 136, 1) 100%)',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -34,6 +34,9 @@ const FormatTimeAgo = (timestamp) => {
 };
 
 const trimString = (str, maxLength) => {
+  if (!str) {
+    return "";
+  }
   if (str.length <= maxLength) {
     return str;
   }

@@ -284,6 +284,28 @@ const fetchOwnedGroups = async () => {
   }
 }
 
+const fetchMessages = async (groupId) => {
+  try {
+    const response = await axiosApi.get(`/groups/${groupId}/messages`);
+    if (response.status === 200) {
+      return { data: response.data, error: null };
+    }
+  } catch (error) {
+    return { data: null, error: error.response.data.error }
+  }
+}
+
+const sendMessage = async (groupId, message) => {
+  try {
+    const response = await axiosApi.post(`/groups/${groupId}/messages`, { message: message });
+    if (response.status === 201) {
+      return { data: response.data, error: null };
+    }
+  } catch (error) {
+    return { data: null, error: error.response.data.error }
+  }
+}
+
 
 
 export const api = {
@@ -310,5 +332,7 @@ export const api = {
   updateUserSettings,
   updateUserAvatar,
   createGroup,
-  sendFeedback
+  sendFeedback,
+  fetchMessages,
+  sendMessage
 };
