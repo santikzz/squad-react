@@ -2,7 +2,8 @@ import axios from "axios";
 import { useRedirect } from "@/context/RedirectProvider";
 
 // const API_URL = "http://squad-api.ddns.net/";
-const API_URL = process.env.REACT_APP_API_DOMAIN_URL;
+// const API_URL = process.env.REACT_APP_API_DOMAIN_URL;
+const API_URL = "https://sq.nimrodcore.net/";
 
 const axiosApi = axios.create({
   baseURL: API_URL + "api/v1",
