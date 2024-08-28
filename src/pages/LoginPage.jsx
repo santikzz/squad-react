@@ -42,7 +42,7 @@ const LoginPage = () => {
   if (isLoggedIn) return (<Navigate to="/" />);
 
   return (
-    <div className="login-form h-screen w-full flex flex-col pt-[33%] items-center bg-gray">
+    <div className="login-form h-screen w-full flex flex-col justify-center items-center bg-gray">
 
       <div className="w-96 flex flex-col justify-center items-center">
 

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Square, ChevronLeft, Pencil } from "lucide-react";
+import { ChevronLeft, Save } from "lucide-react";
 import { ring } from "ldrs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from 'react-hook-form';
@@ -84,20 +84,11 @@ const EditGroupPage = () => {
     });
 
     const onSubmit = async (groupData) => {
-        // console.log(groupData, memberLimitChecked);
-
         setCreating(true);
-
-        try {
-            const response = await api.put(`/groups/${groupId}`, groupData);
-            console.log(response);
-
-            if (response.status === 200) {
-                setCreating(false);
-                navigate(`/group/${response.data.ulid}`);
-            }
-        } catch (error) {
-            console.log(error);
+        const { data, error } = await api.editGroup(groupId, groupData);
+        if (data) {
+            setCreating(false);
+            navigate(`/group/${data.ulid}`);
         }
     };
 
@@ -213,7 +204,7 @@ const EditGroupPage = () => {
                                 <Button className="w-full bg-gradient shadow font-satoshi-bold text-base h-12" type="submit">
                                     {!creating ? (
                                         <>
-                                            <Pencil />
+                                            <Save />
                                             Guardar
                                         </>
                                     ) : (

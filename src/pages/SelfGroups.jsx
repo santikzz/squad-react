@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { ChevronLeft, Square } from "lucide-react";
+import { ChevronLeft, Ghost, Square } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
@@ -90,6 +90,12 @@ const SelfGroups = () => {
             {(!environment || !joinedGroups || !ownedGroups) ? <GroupCardSkeleton /> : (
                 <>
 
+                    {(!option && ownedGroups?.length == 0) || (option && joinedGroups?.length == 0) && (
+                        <div className="w-full mt-[50%] justify-start flex flex-flex justify-center items-center text-gray-300 px-8 gap-2">
+                            <Ghost size="200" strokeWidth={1.5} color="#f3f4f6" />
+                            {/* <label className="text-2xl text-center font-satoshi-bold text-2xl">zzzz...</label> */}
+                        </div>
+                    )}
 
                     <div className="pb-[100px]">
                         <div className={`lg:h-full flex flex-col p-3 gap-3 lg:grid lg:grid-cols-3 bg-white ${!option ? 'hidden' : null}`}>
@@ -97,6 +103,7 @@ const SelfGroups = () => {
                                 <GroupCard group={group} key={group.ulid} />
                             ))}
                         </div>
+
                         <div className="relative text-center justify-center hidden lg:flex">
                             <label className="font-satoshi-medium text-gray-300 bg-white px-3 z-10">Tus grupos</label>
                             <div className="h-[1px] bg-gray-300 absolute w-[95%] top-[50%] -z-10" />

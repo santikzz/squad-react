@@ -248,7 +248,7 @@ const SettingsPage = () => {
                 </div>
 
                 <div className="flex flex-row w-full pt-6">
-                  <Button className="py-6 w-full text-base flex gap-1.5 font-satoshi-bold"><Save size="20" />Guardar</Button>
+                  <Button className="py-6 w-full text-base flex gap-1.5 font-satoshi-bold bg-gradient"><Save size="20" />Guardar</Button>
                 </div>
 
               </form>

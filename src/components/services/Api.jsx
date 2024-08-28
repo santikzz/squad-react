@@ -76,17 +76,30 @@ const fetchUserdata = async (userId = "") => {
   }
 }
 
-const fetchGroups = async (isSearch = false, searchQuery = "", page = 1) => {
+const fetchGroups = async ({ search = null, page = null } = {}) => {
   try {
-    const searchQ = isSearch && searchQuery != "" ? "&search=" + searchQuery : "";
-    const pageN = page > 1 ? "&page=" + page : "";
-    const response = await axiosApi.get(`/groups?${searchQ}${pageN}`);
+
+    const endpoint = '/groups';
+    let url;
+    const params = {};
+
+    // params setup
+    if (search) params.search = search;
+    if (page) params.page = page;
+
+    // request
+    const queryString = new URLSearchParams(params).toString();
+    url = queryString ? `${endpoint}?${queryString}` : endpoint;
+    const response = await axiosApi.get(url);
+
     if (response.status === 200) {
-      return { data: response.data.data, error: null };
+      return { data: response.data, error: null };
     }
+
   } catch (error) {
     return { data: null, error: error.response.data.error }
   }
+
 }
 
 const fetchGroup = async (groupId) => {
@@ -306,7 +319,27 @@ const sendMessage = async (groupId, message) => {
   }
 }
 
+const fetchCarrerasType = async (type) => {
+  try {
+    const response = await axiosApi.get(`/carreras/${type}`);
+    if (response.status === 200) {
+      return { data: response.data, error: null };
+    }
+  } catch (error) {
+    return { data: null, error: error.response.data.error }
+  }
+}
 
+const editGroup = async (groupId, groupData) => {
+  try {
+    const response = await axiosApi.put(`/groups/${groupId}`, groupData);
+    if (response.status === 200) {
+      return { data: response.data, error: null };
+    }
+  } catch (error) {
+    return { data: null, error: error.response.data.error }
+  }
+}
 
 export const api = {
   API_URL,
@@ -334,5 +367,7 @@ export const api = {
   createGroup,
   sendFeedback,
   fetchMessages,
-  sendMessage
+  sendMessage,
+  fetchCarrerasType,
+  editGroup,
 };

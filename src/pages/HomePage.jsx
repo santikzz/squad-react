@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate, Navigate } from "react-router-dom";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import { Menu, Settings, LogOut, UserRound, Plus, Search, X, Bug, Info, Bell, FlaskConical, Ghost, UsersRound } from "lucide-react";
-
-import GroupCard from "@/components/GroupCard";
-import Navbar from "@/components/Navbar";
-import Loader from "@/components/Loader";
-import BottomNav from "@/components/BottomNav";
-import { api } from "@/components/services/Api";
+import { Menu, Search, X, Ghost, ChevronDown } from "lucide-react";
 
 import "../App.css";
-import assets from "@/Assets";
+import GroupCard from "@/components/GroupCard";
+import BottomNav from "@/components/BottomNav";
+import { api } from "@/components/services/Api";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import GroupCardSkeleton from "@/components/GroupCardSkeleton";
 import useDebounce from "@/hooks/useDebounce";
+import SlideSheet from "@/components/SlideSheet";
+import assets from "@/Assets";
 
 const HomePage = () => {
 
@@ -24,17 +20,17 @@ const HomePage = () => {
 
   const [environment, setEnvironment] = useState(null);
   const [groups, setGroups] = useState([]);
+  const [groupsLoading, setGroupsLoading] = useState(false);
   const [sidenavOpen, setSidenavOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [groupsLoading, setGroupsLoading] = useState(true);
 
   /* ==== search ==== */
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSerachQuery] = useState("");
-  const [debouncedSearchQuery, setSebouncedSearchQuery] = useState("");
-  const debouncedSearch = () => { setSebouncedSearchQuery(searchQuery); }
-  useDebounce(debouncedSearch, 600, [searchQuery]);
   const searchInputRef = useRef();
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSerachQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const debouncedSearch = () => { setDebouncedQuery(searchQuery); }
+  useDebounce(debouncedSearch, 600, [searchQuery]);
 
   const fetchEnvironment = async () => {
     const { data, error } = await api.fetchEnvironment()
@@ -45,125 +41,87 @@ const HomePage = () => {
 
   const fetchGroups = async () => {
     setGroupsLoading(true);
-    // setGroups([]);
-    const { data, error } = await api.fetchGroups(showSearch, searchQuery, page);
+    const { data, error } = await api.fetchGroups({
+      search: searchQuery
+    });
     if (data) {
-      setGroups(data);
+      setGroups(data.data);
     }
     setGroupsLoading(false);
   }
 
   useEffect(() => {
-    fetchEnvironment();
+    if (!environment) {
+      fetchEnvironment();
+    }
     fetchGroups();
-  }, [showSearch, debouncedSearchQuery, page])
+  }, [debouncedQuery, page])
 
-  // focus search input
-  useEffect(() => {
-    if (showSearch) {
-      searchInputRef.current.focus();
-    }
-  }, [showSearch]);
 
-  const handleLogout = async () => {
-    const response = await api.logout();
-    if (response) {
-      setIsLoggedIn(false);
-      api.setAuthToken(null);
-      localStorage.clear("token");
-      navigate("/login");
-    }
-  };
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 0 && !groupsLoading) {
+  //       setMoreLoading(true);
+  //       setPage(prevPage => prevPage + 1);
+  //     }
+  //   };
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => window.removeEventListener('scroll', handleScroll);
+  // }, [groupsLoading]);
+
 
   const closeSearch = () => {
     setShowSearch(false);
-    setSerachQuery("");
+    setSerachQuery('');
+    setDebouncedQuery('');
+  }
+
+  const openSearch = () => {
+    setShowSearch(true);
+    searchInputRef.current.focus();
   }
 
   if (!isLoggedIn) return (<Navigate to="/login" />);
 
   return (
     <>
-      <Navbar hideLogo={showSearch}>
-        {!showSearch ? (
-          <>
-            <Menu size="32" strokeWidth="2" onClick={() => setSidenavOpen(true)} />
-            <Search className="active:brightness-50" size="32" strokeWidth="2" onClick={() => setShowSearch(true)} />
-          </>
-        ) : (
-          <div className="flex flex-row w-full items-center justify-between gap-3">
+      <div className={`relative shadow-md w-full z-30 sticky top-0 left-0 right-0 h-16 bg-black flex flex-row text-white justify-between items-center border-b-[1px] border-gray-700 ${showSearch && 'h-32'} transition-all	duration-200 ease-in-out`}>
+        <div className={`absolute left-2/4 -translate-x-2/4 w-[200px] ${showSearch && 'hidden'}`}>
+          <img src={assets.logo1_white} className="w-full" />
+        </div>
+        <div className={`absolute left-0 top-0 bottom-0 items-center px-6 flex flex-row justify-between w-full ease-in ${showSearch ? 'hidden' : 'flex'} z-10`}>
+          <Menu size="32" strokeWidth="2" onClick={() => setSidenavOpen(true)} />
+          <Search className="active:brightness-50" size="32" strokeWidth="2" onClick={openSearch} />
+        </div>
+        <div className={`absolute left-0 top-0 py-4 px-6 flex flex-col gap-3 w-full transition-opacity duration-300 ease-in-out	${showSearch ? 'opacity-1' : 'opacity-0'} -z-10`}>
+          <div className="flex flex-row items-center justify-between gap-3">
             <div className="flex flex-row items-center w-96 px-3 py-2 rounded-full bg-stone-800">
               <Search />
-              <input className="ml-2 bg-transparent text-white outline-none font-satoshi-medium" ref={searchInputRef} value={searchQuery} onChange={(e) => setSerachQuery(e.target.value)} />
+              <input
+                className="ml-2 bg-transparent text-white outline-none font-satoshi-medium"
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={(e) => setSerachQuery(e.target.value)}
+              />
             </div>
             <X size="32" onClick={closeSearch} />
           </div>
-        )}
-      </Navbar>
+          <div className={`flex flex-row gap-3 transition-opacity duration-600 ease-in ${showSearch ? 'opacity-1' : 'opacity-0'}`}>
+            <div className="bg-stone-800 rounded-full px-4 py-1 items-center justify-center flex flex-row gap-1">
+              <label className="font-satoshi-medium text-base">#FILTRO_A</label>
+              <ChevronDown className="pt-1" size={24} />
+            </div>
+            <div className="bg-stone-800 rounded-full px-4 py-1 items-center justify-center flex flex-row gap-1">
+              <label className="font-satoshi-medium text-base">#FILTRO_B</label>
+              <ChevronDown className="pt-1" size={24} />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {(!groups || !environment || groupsLoading) ? (<GroupCardSkeleton />) : (
         <>
-          <Sheet open={sidenavOpen} onOpenChange={setSidenavOpen}>
-            <SheetContent side="left" className="flex flex-col justify-between bg-black border-stone-900 text-white">
-              <SheetHeader>
-                <div className="flex flex-row gap-3 items-center my-12 items-center">
-                  <Avatar className="h-14 w-14">
-                    <AvatarImage src={api.API_URL + environment.user.avatar} />
-                    <AvatarFallback className="bg-gray-200">{environment.user.avatarFallback}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-start">
-                    <Label className="text-white text-xl text-wrap font-satoshi-medium">
-                      {environment.user.name} {environment.user.surname}
-                    </Label>
-                    <Label className="text-gray-500 text-xs font-satoshi-medium">
-                      {environment.user.facultad} - {environment.user.carrera}
-                    </Label>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-6">
-                  <Link to={"/user/" + environment.user.ulid} className="flex flex-row justify-start items-center">
-                    <UserRound className="w-6 mr-2" color="#d1d5db" />
-                    <Label className="font-satoshi-medium text-xl text-gray-300">Perfil</Label>
-                  </Link>
-                  <Link to="/settings" className="flex flex-row font-satoshi-medium justify-start items-center text-xl">
-                    <Settings className="w-6 mr-2" color="#d1d5db" />
-                    <Label className="font-satoshi-medium text-xl text-gray-300">Opciones</Label>
-                  </Link>
-                  <Link to="/notifications" className="flex flex-row font-satoshi-medium justify-start items-center text-xl">
-                    <Bell className="w-6 mr-2" color="#d1d5db" />
-                    <Label className="font-satoshi-medium text-xl text-gray-300">Notificaciones</Label>
-                  </Link>
-                  <Link to="/mygroups" className="flex flex-row font-satoshi-medium justify-start items-center text-xl">
-                    <UsersRound className="w-6 mr-2" color="#d1d5db" />
-                    <Label className="font-satoshi-medium text-xl text-gray-300">Grupos</Label>
-                  </Link>
-                  <button className="flex flex-row font-satoshi-medium text-xl bg-gradient rounded-md py-2 items-center justify-center active:brightness-75" onClick={() => navigate(`/create`)}>
-                    <Plus className="w-6 mr-2" color="#d1d5db" />
-                    <Label className="font-satoshi-medium text-xl text-gray-300">Nuevo grupo</Label>
-                  </button>
-                </div>
-              </SheetHeader>
-              <div className="flex flex-col gap-6">
-                <Link to="/betainfo" className="flex flex-row font-satoshi-medium justify-start items-center text-xl">
-                  <FlaskConical className="w-6 mr-2" color="#d1d5db" />
-                  <Label className="font-satoshi-medium text-xl text-gray-300">BETA INFO</Label>
-                </Link>
-                <Link to="/about" className="flex flex-row font-satoshi-medium justify-start items-center text-xl">
-                  <Info className="w-6 mr-2" color="#d1d5db" />
-                  <Label className="font-satoshi-medium text-xl text-gray-300">Más Info</Label>
-                </Link>
-                <Link to="/report" className="flex flex-row font-satoshi-medium justify-start items-center text-xl">
-                  <Bug className="w-6 mr-2" color="#d1d5db" />
-                  <Label className="font-satoshi-medium text-xl text-gray-300">Bugs & Sugerencias</Label>
-                </Link>
-                <button className="flex flex-row font-satoshi-medium justify-start items-center text-xl" onClick={() => handleLogout()}>
-                  <LogOut className="w-6 mr-2" color="#d1d5db" />
-                  <Label className="font-satoshi-medium text-xl text-gray-300">Cerrar sesion</Label>
-                </button>
-              </div>
-            </SheetContent>
-          </Sheet>
-
+          <SlideSheet open={sidenavOpen} onOpenChange={setSidenavOpen} environment={environment} />
           {/* no groups text */}
           {!groupsLoading && groups.length == 0 ? (
             <div className="absolute inset-y-2/4 w-full flex items-center bg-white">
@@ -177,11 +135,10 @@ const HomePage = () => {
               </div>
             </div>
           ) : null}
-
           {/* groups map */}
           <div className="pb-[100px] lg:h-full flex flex-col p-3 gap-3 lg:grid lg:grid-cols-3 bg-white">
             {groups.map((group, idx) => (
-              <GroupCard group={group} key={group.ulid} />
+              <GroupCard group={group} key={idx} />
             ))}
           </div>
         </>

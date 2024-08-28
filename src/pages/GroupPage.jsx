@@ -131,11 +131,6 @@ const GroupPage = () => {
           <SheetContent side="right" className="flex flex-col justify-between bg-black border-stone-900 text-white">
             <>
               <SheetHeader className="mt-32">
-                {group.isOwner ? (
-                  <Button className="w-full border-2 border-white bg-transparent flex gap-1.5 font-satoshi-medium" onClick={() => navigate(`/edit/${group.ulid}`)}>
-                    <Pencil size="16" />Editar
-                  </Button>
-                ) : null}
               </SheetHeader>
               <SheetFooter className="w-full">
                 {group.user.isMember && !group.isOwner ? (
@@ -145,11 +140,17 @@ const GroupPage = () => {
                   </Button>
                 ) : null}
 
-                {group.isOwner ? (
-                  <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5 font-satoshi-medium" onClick={() => setDeleteGroupDrawer(true)}>
-                    <Trash size="16" /> Eliminar grupo
-                  </Button>
-                ) : null}
+                {group.isOwner && (
+                  <div className="flex flex-col gap-6">
+                    <Button className="w-full border-2 border-gray-400 text-gray-400 bg-transparent flex gap-1.5 font-satoshi-medium" onClick={() => navigate(`/edit/${group.ulid}`)}>
+                      <Pencil size="16" />Editar grupo
+                    </Button>
+
+                    <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5 font-satoshi-medium" onClick={() => setDeleteGroupDrawer(true)}>
+                      <Trash size="16" /> Eliminar grupo
+                    </Button>
+                  </div>
+                )}
 
               </SheetFooter>
             </>
