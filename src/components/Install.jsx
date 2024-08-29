@@ -5,9 +5,9 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Install = () => {
 
-    window.addEventListener('load', () => {
-        document.getElementById('slide-in').classList.add('animate-slide-up');
-    });
+    // window.addEventListener('load', () => {
+    //     document.getElementById('slide-in').classList.add('animate-slide-up');
+    // });
 
     const { isStandalone } = useGlobalContext();
     const [isHidden, setIsHidden] = useState(false);

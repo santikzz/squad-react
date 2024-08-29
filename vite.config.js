@@ -9,7 +9,6 @@ export default defineConfig({
 
   VitePWA({
     registerType: 'autoUpdate',
-    includeAssets: ['/squad-icon-512-maskable.png'],
     manifest: {
       name: 'SQUAD',
       short_name: 'SQUAD',
@@ -20,32 +19,16 @@ export default defineConfig({
       start_url: '/',
       icons: [
         {
-          src: '/squad-icon-512-maskable.png',
+          src: '/static/squad-icon-512-maskable.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'any'
         },
         {
-          src: '/squad-icon-512-maskable.png',
+          src: '/static/squad-icon-512-maskable.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'maskable'
-        }
-      ],
-      screenshots: [
-        {
-          src: "/screen.png",
-          sizes: "640x320",
-          type: "image/png",
-          form_factor: "wide",
-          label: "Application"
-        },
-        {
-          src: "/screen.png",
-          sizes: "640x320",
-          type: "image/png",
-          form_factor: "narrow",
-          label: "Application"
         }
       ]
     }
@@ -59,3 +42,4 @@ export default defineConfig({
     },
   },
 })
+
