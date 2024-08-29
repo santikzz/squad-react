@@ -7,38 +7,26 @@ const Install = () => {
 
     // window.addEventListener('load', () => {
     //     document.getElementById('slide-in').classList.add('animate-slide-up');
-    // });
+    // }); 
 
     const { isStandalone } = useGlobalContext();
     const [isHidden, setIsHidden] = useState(false);
 
     let deferredPrompt;
 
-    window.addEventListener('beforeinstallprompt', (event) => {
-        // Prevent the mini-infobar from appearing on mobile
-        event.preventDefault();
-        // Stash the event so it can be triggered later
-        deferredPrompt = event;
-        // Update UI to show the install button
-        const installBtn = document.getElementById('installBtn');
-        installBtn.classList.remove('hidden');
-
-        // Add event listener to the install button
-        installBtn.addEventListener('click', () => {
-            // Show the install prompt
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                } else {
-                    console.log('User dismissed the install prompt');
-                }
-                // Clear the deferredPrompt so it can only be used once
-                deferredPrompt = null;
-            });
-        });
+    window.addEventListener('beforeinstallprompt', (e) => {
+        deferredPrompt = e;
     });
+
+    const installApp = async () => {
+        if (deferredPrompt !== null) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                deferredPrompt = null;
+            }
+        }
+    }
 
     if (isStandalone || isHidden) return;
 
@@ -53,7 +41,7 @@ const Install = () => {
                     <label className="font-satoshi-medium text-lg">Para una mejor experiencia, instala la app o agrégala a tu pantalla de inicio</label>
                     <Download size={96} color="#5ca3af" />
                 </div>
-                <ButtonLoader id="installBtn">
+                <ButtonLoader id="installBtn" onClick={installApp}>
                     Agregar al inicio
                 </ButtonLoader>
             </div>
