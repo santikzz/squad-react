@@ -321,6 +321,17 @@ const sendMessage = async (groupId, message) => {
   }
 }
 
+const fetchCarreras = async () => {
+  try {
+    const response = await axiosApi.get(`/carreras`);
+    if (response.status === 200) {
+      return { data: response.data, error: null };
+    }
+  } catch (error) {
+    return { data: null, error: error.response.data.error }
+  }
+}
+
 const fetchCarrerasType = async (type) => {
   try {
     const response = await axiosApi.get(`/carreras/${type}`);
@@ -371,5 +382,6 @@ export const api = {
   fetchMessages,
   sendMessage,
   fetchCarrerasType,
+  fetchCarreras,
   editGroup,
 };

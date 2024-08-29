@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import { Menu, Search, X, Ghost, ChevronDown } from "lucide-react";
+import { Menu, Search, X, Ghost, ChevronDown, Filter } from "lucide-react";
+
+// import { Switch } from "@/components/ui/switch";
+// import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+// import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+// import { Button } from "@/components/ui/button"
+// import { Check, ChevronsUpDown } from "lucide-react"
 
 import "../App.css";
 import GroupCard from "@/components/GroupCard";
@@ -81,11 +87,37 @@ const HomePage = () => {
     searchInputRef.current.focus();
   }
 
+  // const [open, setOpen] = React.useState(false)
+  // const [value, setValue] = React.useState("")
+
+  // const frameworks = [
+  //   {
+  //     value: "next.js",
+  //     label: "Next.js",
+  //   },
+  //   {
+  //     value: "sveltekit",
+  //     label: "SvelteKit",
+  //   },
+  //   {
+  //     value: "nuxt.js",
+  //     label: "Nuxt.js",
+  //   },
+  //   {
+  //     value: "remix",
+  //     label: "Remix",
+  //   },
+  //   {
+  //     value: "astro",
+  //     label: "Astro",
+  //   },
+  // ]
+
   if (!isLoggedIn) return (<Navigate to="/login" />);
 
   return (
     <>
-      <div className={`relative shadow-md w-full z-30 sticky top-0 left-0 right-0 h-16 bg-black flex flex-row text-white justify-between items-center border-b-[1px] border-gray-700 ${showSearch && 'h-32'} transition-all	duration-200 ease-in-out`}>
+      <div className={`relative shadow-md w-full z-30 sticky top-0 left-0 right-0 h-16 bg-black flex flex-row text-white justify-between items-center border-b-[1px] border-gray-700 ${showSearch && 'h-24'} transition-all	duration-200 ease-in-out`}>
         <div className={`absolute left-2/4 -translate-x-2/4 w-[200px] ${showSearch && 'hidden'}`}>
           <img src={assets.logo1_white} className="w-full" />
         </div>
@@ -106,15 +138,48 @@ const HomePage = () => {
             </div>
             <X size="32" onClick={closeSearch} />
           </div>
-          <div className={`flex flex-row gap-3 transition-opacity duration-600 ease-in ${showSearch ? 'opacity-1' : 'opacity-0'}`}>
-            <div className="bg-stone-800 rounded-full px-4 py-1 items-center justify-center flex flex-row gap-1">
-              <label className="font-satoshi-medium text-base">#FILTRO_A</label>
-              <ChevronDown className="pt-1" size={24} />
-            </div>
-            <div className="bg-stone-800 rounded-full px-4 py-1 items-center justify-center flex flex-row gap-1">
-              <label className="font-satoshi-medium text-base">#FILTRO_B</label>
-              <ChevronDown className="pt-1" size={24} />
-            </div>
+          <div className={`flex flex-row gap-3 items-center transition-opacity duration-600 ease-in ${showSearch ? 'opacity-1' : 'opacity-0'}`}>
+
+
+            {/* <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+
+                <button
+                  className="flex flex-row items-center justify-between font-satoshi-medium gap-1 bg-stone-800 rounded-full px-2 py-1"
+                >
+                  <Filter className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  {value ? trimString(frameworks.find((framework) => framework.value === value)?.label, 12) : "Carrera"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </button>
+
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0 ml-6 mt-4 dark">
+                <Command>
+                  <CommandInput placeholder="Buscar..." />
+                  <CommandList>
+                    <CommandEmpty>Sin resultados</CommandEmpty>
+                    <CommandGroup>
+                      {frameworks.map((framework) => (
+                        <CommandItem
+                          key={framework.value}
+                          value={framework.value}
+                          onSelect={(currentValue) => {
+                            setValue(currentValue === value ? "" : currentValue)
+                            setOpen(false)
+                          }}
+                        >
+                          <Check
+                            className={`mr-2 h-4 w-4 ${value === framework.value ? 'opacity-100' : 'opacity-0'}`}
+                          />
+                          {framework.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover> */}
+
           </div>
         </div>
       </div>

@@ -8,10 +8,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronLeft, Save, ImageUp } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 
 import "../App.css";
 import Navbar from "@/components/Navbar";
@@ -36,13 +38,15 @@ const userdataSchema = z.object({
 
 const SettingsPage = () => {
 
+  const { isLoggedIn } = useGlobalContext();
+
   const [environment, setEnvironment] = useState(null);
   const [userdata, setUserdata] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { isLoggedIn } = useGlobalContext();
+  const [carreras, setCarreras] = useState(null);
 
   const fetchEnvironment = async () => {
     const { data, error } = await api.fetchEnvironment()
@@ -55,17 +59,24 @@ const SettingsPage = () => {
     const { data, error } = await api.fetchUserdata();
     if (data) {
       setUserdata(data);
-
       userdataForm.reset({
         name: data.name,
         surname: data.surname,
         about: data.about || '',
-        // idCarrera: data.idCarrera,
+        idCarrera: data.idCarrera,
       });
     }
   }
 
+  const fetchCarreras = async () => {
+    const { data, error } = await api.fetchCarreras()
+    if (data) {
+      setCarreras(data);
+    }
+  }
+
   useEffect(() => {
+    fetchCarreras();
     fetchEnvironment();
     fetchUserdata();
   }, [refresh]);
@@ -105,9 +116,11 @@ const SettingsPage = () => {
       name: userdata.name,
       surname: userdata.surname,
       about: userdata.about,
-      // idCarrera: userdata.idCarrera,
+      idCarrera: userdata.idCarrera,
     },
   });
+
+
 
   if (!isLoggedIn) return (<Navigate to="/login" />);
 
@@ -120,11 +133,12 @@ const SettingsPage = () => {
         </Link>
       </Navbar>
 
-      {(!environment || !userdata) ? <Loader /> : (
+      {(!environment || !userdata || !carreras) ? <Loader /> : (
 
         <div className="h-screen w-full flex flex-col p-4">
 
           <div className="flex flex-col gap-4">
+            
             <div className="flex flex-col w-full items-center gap-4">
               <Avatar className="w-24 h-24">
                 <AvatarImage src={api.API_URL + userdata.avatar} alt="profile" />
@@ -192,6 +206,34 @@ const SettingsPage = () => {
                         </FormControl>
                         <FormMessage />
                       </FormItem>
+                    )}
+                  />
+
+                  <Separator className="my-4"/>
+
+                  <Label className="font-satoshi-bold">Carrera</Label>
+                  <Controller
+                    control={userdataForm.control}
+                    name="idCarrera"
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        className="h-10 w-full rounded-md border-[1px] border-gray-200 bg-background flex flex-row justify-between font-satoshi-medium"
+                        onChange={(event) => {
+                          field.onChange(event);
+                          event.target.blur();
+                        }}
+                      >
+                        <option value="" disabled>Elije tu carrera</option>
+                        {carreras?.map(carrera => (
+                          <option
+                            key={carrera.id}
+                            value={carrera.id}
+                          >
+                            {carrera?.name}
+                          </option>
+                        ))}
+                      </select>
                     )}
                   />
 
