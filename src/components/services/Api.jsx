@@ -248,7 +248,7 @@ const updateUserAvatar = async (data) => {
       // },
     });
     if (response.status === 200) {
-      return true;;
+      return true;
     }
   } catch (error) {
     return false;

@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +13,8 @@ import { ring } from "ldrs";
 
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { api } from "@/components/services/Api";
+import Loader from "@/components/Loader";
+import ButtonLoader from "@/components/ButtonLoader";
 
 const registerFormSchema = z
   .object({
@@ -26,13 +27,13 @@ const registerFormSchema = z
       .string({
         required_error: "Ingresa tu nombre.",
       })
-      .min(4, { message: "Minimo 4 caracteres" })
+      .min(2, { message: "Minimo 2 caracteres" })
       .max(32, { message: "Maximo 32 caracteres" }),
     surname: z
       .string({
         required_error: "Ingresa tu nombre.",
       })
-      .min(4, { message: "Minimo 4 caracteres" })
+      .min(2, { message: "Minimo 2 caracteres" })
       .max(32, { message: "Maximo 32 caracteres" }),
     password: z
       .string({
@@ -43,9 +44,6 @@ const registerFormSchema = z
       .string({
         required_error: "Repite la contraseña."
       }),
-    // idCarrera: z.string({
-    //   required_error: "Elije una carrera.",
-    // }),
   })
   .refine((data) => data.password === data.password_confirmation, {
     message: "Las contraseñas no coinciden",
@@ -54,37 +52,23 @@ const registerFormSchema = z
 
 const RegisterPage = () => {
 
+  const { isLoggedIn } = useGlobalContext();
+  const navigate = useNavigate();
+  ring.register();
+
   const [loading, setLoading] = useState(false);
-  // const [facultades, setFacultades] = useState([]);
   const [carreraId, setCarreraId] = useState(null);
   const [carreras, setCarreras] = useState(null);
   const [selectedCarrera, setSelectedCarrera] = useState(null);
   const [registerSuccess, setRegisterSuccess] = useState(false);
 
-  const { isLoggedIn } = useGlobalContext();
-
-  const navigate = useNavigate();
-  ring.register();
-
-  // useEffect(() => {
-  //   fetchFacultades();
-  // }, []);
-
-  // const fetchFacultades = async () => {
-  //   const { data, error } = await api.fetchFacultades();
-  //   if (data) {
-  //     setFacultades(data);
-  //     setCarreras(data[0]["carreras"]);
-  //   } else {
-  //     console.error(error);
-  //   }
-  // };
-
   const fetchCarreras = async (type) => {
+    setLoadingCarreras(true);
     const { data, error } = await api.fetchCarrerasType(type);
     if (data) {
       setCarreras(data);
     }
+    setLoadingCarreras(false);
   }
 
   const form = useForm({
@@ -103,17 +87,13 @@ const RegisterPage = () => {
       setRegisterSuccess(true);
     } else {
       setError("Lo sentimos, ha ocurrido un error, intentalo de nuevo mas tarde");
-      console.error(error);
     }
   }
 
-  // const handleSelectFacultad = (idFacultad) => {
-  //   setCarreras(facultades[idFacultad]["carreras"]);
-  // };
-
   const headTitles = ['Crea tu cuenta', 'Elije tu carrera', 'Elije tu carrera', 'Verifica tus datos'];
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4; // Adjust based on the number of steps you want
+  const [loadingCarreras, setLoadingCarreras] = useState(false);
+  const totalSteps = 4;
 
   const nextStep = async () => {
     const isValid = await trigger();
@@ -127,6 +107,7 @@ const RegisterPage = () => {
   };
 
   const handleSetTipoCarrera = (type) => {
+    setCarreras([]);
     fetchCarreras(type);
     nextStep();
   }
@@ -153,7 +134,6 @@ const RegisterPage = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-
       <div className="absolute w-full flex flex-col items-center justify-center pt-20 pb-4 gap-2 z-10">
         <Label className="text-4xl font-satoshi-bold">{headTitles[currentStep - 1]}</Label>
         <Link to="/login" className="text-blue-500 font-satoshi-medium">o Iniciar Sesion</Link>
@@ -166,7 +146,7 @@ const RegisterPage = () => {
           style={{ transform: `translateX(-${(currentStep - 1) * 100}%)` }}
         >
 
-          <div className="w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[600px] gap-6">
+          <div className="relative w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[600px] gap-6">
             <Form {...form}>
               <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
                 <FormField
@@ -217,6 +197,9 @@ const RegisterPage = () => {
                       <FormControl>
                         <Input className="font-satoshi-medium" type="password" {...field} />
                       </FormControl>
+                      <FormDescription>
+                        Minimo 8 caracteres
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -237,17 +220,19 @@ const RegisterPage = () => {
               </form>
             </Form>
 
-            <Button
-              onClick={nextStep}
-              className={`h-[50px] shadow-sm w-full flex gap-1 font-satoshi-bold`}
-            >
-              Continuar
-              <ChevronRight size="20" />
-            </Button>
+            <div className="w-full bottom-0 absolute p-8">
+              <Button
+                onClick={nextStep}
+                className={`h-[50px] shadow-sm w-full flex gap-1 font-satoshi-bold`}
+              >
+                Continuar
+                <ChevronRight size="20" />
+              </Button>
+            </div>
 
           </div> {/* end step 1 */}
 
-          <div className="w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[500px]">
+          <div className="relative w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[500px]">
 
             <div className="flex flex-col w-full h-full gap-6 mb-12">
 
@@ -311,10 +296,13 @@ const RegisterPage = () => {
           </div > {/*end step 2*/}
 
 
-          <div className="w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[500px] gap-4">
+          <div className="relative w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[500px] gap-4">
+
+            {loadingCarreras && (
+              <l-ring size="50" stroke="6" bg-opacity="0" speed="2" color="#15b788"></l-ring>
+            )}
 
             <div className="flex flex-col w-full shadow-md rounded-b-lg border-b-[0.5px]">
-
               {carreras?.map((carrera, idx) => (
                 <button
                   onClick={() => handleSelectCarreraId(carrera)}
@@ -326,7 +314,7 @@ const RegisterPage = () => {
               ))}
             </div>
 
-            <div className="flex flex-row justify-between gap-4 w-full">
+            <div className="w-full bottom-0 absolute p-8">
               <Button
                 onClick={prevStep}
                 className={`h-[50px] shadow-sm w-full flex gap-1 font-satoshi-bold flex-1`}
@@ -338,7 +326,7 @@ const RegisterPage = () => {
 
           </div> {/*end step 3*/}
 
-          <div className="w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[500px] gap-4">
+          <div className="relative w-full flex-shrink-0 p-8 flex flex-col items-center mt-[40%] lg:mt-[10%] lg:px-[500px] gap-4">
 
             <div className="flex flex-col w-full">
 
@@ -359,15 +347,14 @@ const RegisterPage = () => {
 
             </div>
 
-            <div className="flex flex-row justify-between gap-4 w-full mt-6">
+            <div className="w-full bottom-0 absolute p-8 flex flex-row justify-between gap-4 w-full mt-6">
               <Button
                 onClick={prevStep}
-                className={`h-[50px] shadow-sm w-full flex gap-1 font-satoshi-bold flex-1`}
+                className={`h-[50px] flex gap-1 font-satoshi-bold flex-1`}
               >
-                <ChevronLeft size="20" />
-                Atras
+                <ChevronLeft size="20" />Atras
               </Button>
-              <Button
+              <ButtonLoader
                 onClick={() => {
                   if (formRef.current) {
                     formRef.current.dispatchEvent(
@@ -375,7 +362,7 @@ const RegisterPage = () => {
                     );
                   }
                 }}
-                className={`h-[50px] shadow-sm w-full flex gap-1 font-satoshi-bold flex-1 bg-gradient`}
+                className="h-[50px] flex-2"
               >
                 {!loading ? (
                   <>
@@ -385,7 +372,7 @@ const RegisterPage = () => {
                 ) : (
                   <l-ring size="20" stroke="3" bg-opacity="0" speed="2" color="gray"></l-ring>
                 )}
-              </Button>
+              </ButtonLoader>
             </div>
 
           </div> {/*end step 4*/}

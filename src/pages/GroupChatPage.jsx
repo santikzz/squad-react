@@ -11,6 +11,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { trimString } from "@/components/services/Utils";
 import MessageBubble from "@/components/MessageBubble";
 import useInterval from "@/hooks/useInterval";
+import ButtonLoader from "@/components/ButtonLoader";
 
 const GroupChatPage = ({ }) => {
   const { groupId } = useParams();
@@ -22,6 +23,7 @@ const GroupChatPage = ({ }) => {
   const [group, setGroup] = useState(null);
   const [messages, setMessages] = useState(null);
   const [text, setText] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   const fetchGroup = async () => {
     const { data, error } = await api.fetchGroup(groupId);
@@ -53,11 +55,13 @@ const GroupChatPage = ({ }) => {
   }, [messages]);
 
   const handleSendMessage = async () => {
+    setIsSending(true);
     const { data, error } = await api.sendMessage(groupId, text);
     if (data) {
       setMessages((prev) => [...prev, data]);
     }
     setText('');
+    setIsSending(false);
   }
 
   useInterval(() => {
@@ -76,7 +80,7 @@ const GroupChatPage = ({ }) => {
         <label className="font-satoshi-medium text-white text-xl">{trimString(group?.title, 32)}</label>
       </div>
 
-      <div className="w-full h-full flex flex-col justify-between px-2 py-4 gap-2" >
+      <div className="w-full h-full flex flex-col justify-start px-2 py-4 gap-2 bg-gray-100 h-screen" >
 
         <div className="h-16" />
 
@@ -89,22 +93,24 @@ const GroupChatPage = ({ }) => {
       </div>
 
       <div className="fixed bottom-0 left-0 w-full bg-white p-4 border-t border-gray-300">
-        <div className="flex pb-4">
+        
+        <div className="flex flex-row gap-3 pb-4">
 
           <input
             type="text"
             placeholder="Escribe un mensaje"
-            className="flex-1 rounded-full border border-gray-300 px-4 py-2 focus:outline-none"
+            className="flex-1 rounded-md border border-gray-300 px-4 py-2 focus:outline-none"
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
 
-          <button
+          <ButtonLoader
             onClick={handleSendMessage}
-            className="ml-2 bg-blue-500 text-white rounded-full px-4 py-2 bg-gradient"
+            className="max-w-12"
+            isLoading={isSending}
           >
             <SendHorizontal />
-          </button>
+          </ButtonLoader>
         </div>
       </div>
 

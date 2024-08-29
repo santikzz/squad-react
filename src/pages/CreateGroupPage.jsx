@@ -21,21 +21,26 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import assets from "@/Assets";
 import InputNumber from "@/components/InputNumber";
 import OptionSwitch from "@/components/OptionSwitch";
+import ButtonLoader from "@/components/ButtonLoader";
 
 const FormSchema = z.object({
   title: z
     .string({
       required_error: "Escribe un titulo.",
     })
-    .min(12, {
+    .min(8, {
       message: "Titulo debe tener al menos 12 caracteres.",
+    }).max(256, {
+      message: "Maximo 256 caracteres",
     }),
   description: z
     .string({
       required_error: "Escribe una descripcion.",
     })
-    .min(12, {
+    .min(8, {
       message: "Descripcion debe tener al menos 12 caracteres.",
+    }).max(1024, {
+      message: "Maximo 1024 caracteres",
     }),
   privacy: z.string(),
   maxMembers: z.number().min(0).max(20),
@@ -194,16 +199,11 @@ const CreateGroupPage = () => {
               </div>
 
               <div className="w-full mt-16">
-                <Button className="w-full bg-gradient shadow font-satoshi-bold text-base h-12" type="submit">
-                  {!creating ? (
-                    <>
-                      <Plus />
-                      Crear
-                    </>
-                  ) : (
-                    <l-ring size="20" stroke="3" bg-opacity="0" speed="2" color="gray"></l-ring>
-                  )}
-                </Button>
+
+                <ButtonLoader isLoading={creating} type="submit">
+                  <Plus /> Crear
+                </ButtonLoader>
+
               </div>
             </form>
           </Form>

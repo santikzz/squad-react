@@ -17,6 +17,7 @@ import assets from "@/Assets";
 import { FormatTimeAgo } from "@/components/services/Utils";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { api } from "@/components/services/Api";
+import ButtonLoader from "@/components/ButtonLoader";
 
 const GroupPage = () => {
 
@@ -27,7 +28,7 @@ const GroupPage = () => {
   const [deleteGroupDrawer, setDeleteGroupDrawer] = useState(false);
   const [memberOptionsDrawer, setMemberOptionsDrawer] = useState(false);
   const [optionsNav, setOptionsNav] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [memberKickId, setMemberKickId] = useState(null);
   const [error, setError] = useState(null);
@@ -40,7 +41,6 @@ const GroupPage = () => {
     if (data) {
       setEnvironment(data);
     }
-    setLoading(false);
   }
 
   const fetchGroup = async () => {
@@ -53,11 +53,13 @@ const GroupPage = () => {
   };
 
   useEffect(() => {
+    setLoading(false);
     fetchEnvironment();
     fetchGroup();
   }, [refresh]);
 
   const handleJoinGroup = async () => {
+    setLoading(true);
     let action = group.user.hasJoinRequest ? "cancel" : "join";
     const { data, error } = await api.handleJoinGroup(group.ulid, action);
     if (data) {
@@ -280,22 +282,17 @@ const GroupPage = () => {
               {(!group.isOwner && !group.user.isMember) ? (
 
                 group.maxMembers != null && group.membersCount >= group.maxMembers ? (
-                  <Button className="bg-gradient active:brightness-75 h-12 shadow-sm flex flex-row gap-1 brightness-75">
-                    <Ban />
-                    <Label className="text-white text-base font-satoshi-bold">Grupo lleno</Label>
-                  </Button>
+                  <ButtonLoader disabled={true}>
+                    <Ban /> Grupo lleno
+                  </ButtonLoader>
                 ) : group.user.hasJoinRequest ? (
-                  <Button className="bg-gradient active:brightness-75 h-12 shadow-sm flex flex-row gap-1" onClick={handleJoinGroup}>
-                    <X />
-                    <Label className="text-white text-base font-satoshi-bold">Cancelar solicitud</Label>
-                  </Button>
+                  <ButtonLoader onClick={handleJoinGroup} isLoading={loading}>
+                    <X /> Cancelar solicitud
+                  </ButtonLoader>
                 ) : !group.user.isMember ? (
-                  <Button className="bg-gradient active:brightness-75 h-12 shadow-sm flex flex-row gap-1" onClick={handleJoinGroup}>
-                    <Forward />
-                    <Label className="text-white text-base font-satoshi-bold">
-                      {group.privacy == "closed" ? "Solicitar unirse" : "Unirse"}
-                    </Label>
-                  </Button>
+                  <ButtonLoader onClick={handleJoinGroup} isLoading={loading}>
+                    <Forward /> {group.privacy == "closed" ? "Solicitar unirse" : "Unirse"}
+                  </ButtonLoader>
                 ) : null
 
               ) : null}
