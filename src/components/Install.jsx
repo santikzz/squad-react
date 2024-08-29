@@ -44,7 +44,8 @@ const Install = () => {
 
     return (
         <div className={`absolute top-0 bottom-0 left-0 w-full bg-black/50 t z-20 flex flex-col justify-end`}>
-            <div id="slide-in" className="bg-gray-100 w-full flex flex-col px-6 pb-8 pt-6 gap-2 rounded-t-lg transform translate-y-full opacity-0 transition-all duration-700 ease-out">
+            {/* <div id="slide-in" className="bg-gray-100 w-full flex flex-col px-6 pb-8 pt-6 gap-2 rounded-t-lg transform translate-y-full opacity-0 transition-all duration-700 ease-out"> */}
+            <div className="bg-gray-100 w-full flex flex-col px-6 pb-8 pt-6 gap-2 rounded-t-lg">
                 <div className="flex flex-1 justify-end ">
                     <button className="" onClick={() => setIsHidden(true)}><X /></button>
                 </div>

@@ -22,13 +22,30 @@ export default defineConfig({
         {
           src: '/squad-icon-512-maskable.png',
           sizes: '512x512',
-          type: 'image/png'
+          type: 'image/png',
+          purpose: 'any'
         },
         {
           src: '/squad-icon-512-maskable.png',
           sizes: '512x512',
           type: 'image/png',
           purpose: 'maskable'
+        }
+      ],
+      "screenshots": [
+        {
+          "src": "/screen.png",
+          "sizes": "640x320",
+          "type": "image/png",
+          "form_factor": "wide",
+          "label": "Application"
+        },
+        {
+          "src": "/screen.png",
+          "sizes": "640x320",
+          "type": "image/png",
+          "form_factor": "narrow",
+          "label": "Application"
         }
       ]
     }
