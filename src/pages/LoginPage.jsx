@@ -9,6 +9,8 @@ import { ring } from "ldrs";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { api } from "@/components/services/Api";
 import assets from "@/Assets";
+import InputPassword from "@/components/InputPassword";
+import Install from "@/components/Install";
 
 const LoginPage = () => {
   const [userdata, setUserdata] = useState({});
@@ -41,25 +43,27 @@ const LoginPage = () => {
 
   if (isLoggedIn) return (<Navigate to="/" />);
 
-  return (
+  return (<>
+    <Install />
     <div className="login-form h-screen w-full flex flex-col justify-center items-center bg-gray">
 
       <div className="w-96 flex flex-col justify-center items-center">
 
         <div className="w-40 flex justify-center">
           <img src={assets.splash_black} className="drop-shadow-md"></img>
+          {/* <img src={assets.logo2_black} className="drop-shadow-md"></img> */}
         </div>
 
         <div className="flex flex-col w-full gap-2 mt-4">
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label className="text-base flex flex-row items-center gap-1.5 font-satoshi-bold"><Mail size="16" /> Email</Label>
-            <Input variant="outline" type="text" className={`font-satoshi-medium border-[1px] border-gray-300 ${error ? "outline outline-2 outline-red-600" : null} `} name="email" value={userdata.email} onChange={handleInputChange} id="email" />
+            <Input variant="outline" type="text" className={`font-satoshi-medium border-[1px] border-gray-300 ${error ? "outline outline-2 outline-red-600" : null} `} name="email" value={userdata?.email} onChange={handleInputChange} id="email" />
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label className="text-base flex flex-row items-center gap-1.5 font-satoshi-bold"><Lock size="16" /> Contraseña</Label>
-            <Input variant="outline" type="password" className={`font-satoshi-medium border-[1px] border-gray-300 ${error ? "outline outline-2 outline-red-600" : null} `} name="password" value={userdata.password} onChange={handleInputChange} id="password" />
+            <InputPassword name="password" value={userdata.password} onChange={handleInputChange} />
           </div>
 
         </div>
@@ -116,6 +120,7 @@ const LoginPage = () => {
 
       </div>
     </div>
+  </>
   );
 };
 

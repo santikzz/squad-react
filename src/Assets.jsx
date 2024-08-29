@@ -6,6 +6,7 @@ import splash_black from "/static/squad_splash_black_2.png";
 // import splash_white from "/static/squad_splash_white.webp";
 import tuto from "/static/tuto.jpg";
 import logo1_white from "/static/squad-white-new.png";
+import logo2_black from "/static/squad-black-new.png";
 import logo2_gradient from "/static/squad-new.png";
 
 const assets = {
@@ -17,6 +18,7 @@ const assets = {
     // splash_white,
     tuto,
     logo2_gradient,
+    logo2_black,
 }
 
 export default assets;

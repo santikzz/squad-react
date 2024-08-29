@@ -48,6 +48,22 @@
     background: var(--squad-gradient);
   } */
 
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  #slide-in.animate-slide-up {
+    animation: slideUp 0.7s ease-out forwards;
+  }
+
   .select__item {
     user-select: none !important;
   }

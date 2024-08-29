@@ -15,6 +15,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { api } from "@/components/services/Api";
 import Loader from "@/components/Loader";
 import ButtonLoader from "@/components/ButtonLoader";
+import InputPassword from "@/components/InputPassword";
 
 const registerFormSchema = z
   .object({
@@ -156,7 +157,7 @@ const RegisterPage = () => {
                     <FormItem>
                       <FormLabel className="font-satoshi-bold">Email</FormLabel>
                       <FormControl>
-                        <Input className="font-satoshi-medium" type="email" {...field} />
+                        <Input className="font-satoshi-medium border-[1px] border-gray-300" type="email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -169,7 +170,7 @@ const RegisterPage = () => {
                     <FormItem>
                       <FormLabel className="font-satoshi-bold">Nombre</FormLabel>
                       <FormControl>
-                        <Input className="font-satoshi-medium" {...field} />
+                        <Input className="font-satoshi-medium border-[1px] border-gray-300" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -182,7 +183,7 @@ const RegisterPage = () => {
                     <FormItem>
                       <FormLabel className="font-satoshi-bold">Apellido</FormLabel>
                       <FormControl>
-                        <Input className="font-satoshi-medium" {...field} />
+                        <Input className="font-satoshi-medium border-[1px] border-gray-300" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -195,7 +196,7 @@ const RegisterPage = () => {
                     <FormItem>
                       <FormLabel className="font-satoshi-bold">Contraseña</FormLabel>
                       <FormControl>
-                        <Input className="font-satoshi-medium" type="password" {...field} />
+                        <InputPassword name="password" {...field} />
                       </FormControl>
                       <FormDescription>
                         Minimo 8 caracteres
@@ -211,7 +212,7 @@ const RegisterPage = () => {
                     <FormItem>
                       <FormLabel className="font-satoshi-bold">Repita la contraseña</FormLabel>
                       <FormControl>
-                        <Input className="font-satoshi-medium" type="password" {...field} />
+                        <InputPassword name="password" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -352,7 +353,7 @@ const RegisterPage = () => {
                 onClick={prevStep}
                 className={`h-[50px] flex gap-1 font-satoshi-bold flex-1`}
               >
-                <ChevronLeft size="20" />Atras
+                <ChevronLeft size="20" />
               </Button>
               <ButtonLoader
                 onClick={() => {
@@ -363,15 +364,10 @@ const RegisterPage = () => {
                   }
                 }}
                 className="h-[50px] flex-2"
+                isLoading={loading}
               >
-                {!loading ? (
-                  <>
-                    Registrarse
-                    <ChevronRight size="20" />
-                  </>
-                ) : (
-                  <l-ring size="20" stroke="3" bg-opacity="0" speed="2" color="gray"></l-ring>
-                )}
+                Registrarse
+                <ChevronRight size="20" />
               </ButtonLoader>
             </div>
 
