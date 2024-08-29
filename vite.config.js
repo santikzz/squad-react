@@ -32,20 +32,20 @@ export default defineConfig({
           purpose: 'maskable'
         }
       ],
-      "screenshots": [
+      screenshots: [
         {
-          "src": "/screen.png",
-          "sizes": "640x320",
-          "type": "image/png",
-          "form_factor": "wide",
-          "label": "Application"
+          src: "/screen.png",
+          sizes: "640x320",
+          type: "image/png",
+          form_factor: "wide",
+          label: "Application"
         },
         {
-          "src": "/screen.png",
-          "sizes": "640x320",
-          "type": "image/png",
-          "form_factor": "narrow",
-          "label": "Application"
+          src: "/screen.png",
+          sizes: "640x320",
+          type: "image/png",
+          form_factor: "narrow",
+          label: "Application"
         }
       ]
     }
