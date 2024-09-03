@@ -63,6 +63,9 @@ const RegisterPage = () => {
   const [selectedCarrera, setSelectedCarrera] = useState(null);
   const [registerSuccess, setRegisterSuccess] = useState(false);
 
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const fetchCarreras = async (type) => {
     setLoadingCarreras(true);
     const { data, error } = await api.fetchCarrerasType(type);
@@ -83,12 +86,19 @@ const RegisterPage = () => {
     setLoading(true);
     console.log({ ...formData, idCarrera: carreraId });
     const { data, error } = await api.register({ ...formData, idCarrera: carreraId.toString() });
+    setLoading(false);
     if (data) {
       setLoading(false);
       setRegisterSuccess(true);
     } else {
+      if (error.code == 'email_already_taken') {
+        setErrorMessage(`Lo sentimos, ${formData.email} ya existe`);
+        setShowError(true);
+      }
+      // console.log(error);
       setError("Lo sentimos, ha ocurrido un error, intentalo de nuevo mas tarde");
     }
+
   }
 
   const headTitles = ['Crea tu cuenta', 'Elije tu carrera', 'Elije tu carrera', 'Verifica tus datos'];
@@ -131,6 +141,18 @@ const RegisterPage = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction className="font-satoshi-bold" onClick={() => navigate("/login")}>Iniciar Sesion</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showError}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-satoshi-bold"></AlertDialogTitle>
+            <AlertDialogDescription className="font-satoshi-medium text-back text-lg">{errorMessage}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-satoshi-bold" onClick={() => setShowError(false)}>Aceptar</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

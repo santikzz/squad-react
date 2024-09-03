@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock } from "lucide-react";
 import { ring } from "ldrs";
 
+
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { api } from "@/components/services/Api";
 import assets from "@/Assets";
@@ -63,7 +64,7 @@ const LoginPage = () => {
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label className="text-base flex flex-row items-center gap-1.5 font-satoshi-bold"><Lock size="16" /> Contraseña</Label>
-            <InputPassword name="password" value={userdata.password} onChange={handleInputChange} />
+            <InputPassword name="password" value={userdata.password} onChange={handleInputChange} error={error} />
           </div>
 
         </div>
@@ -114,7 +115,14 @@ const LoginPage = () => {
           <Label className="text-base font-satoshi-medium">¿Aun no tienes una cuenta? <Link className="text-blue-400 ml-1" to="/register">Registrate</Link> </Label>
         </div>
 
-        <div className="fixed bottom-0 left-0 w-full flex justify-center pb-4">
+
+
+        <div className="fixed bottom-0 left-0 w-full flex flex-col items-center justify-center pb-4">
+          <div className="flex flex-row w-full justify-between px-6 mb-4">
+            <img src={assets.logo_unicen} className="w-36 contrast-50" />
+            <img src={assets.logo_exa} className="w-36 contrast-50" />
+          </div>
+
           <label className="text-gray-400 font-satoshi-regular">BETA 0.24.06.27</label>
         </div>
 

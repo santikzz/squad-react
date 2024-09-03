@@ -89,17 +89,6 @@ const GroupPage = () => {
     }
   };
 
-  const handleShareGroup = () => {
-    if (!navigator.clipboard) {
-      toast("No se pudo copiar al portapapeles (No SSL Encryption HTTPS Error)", { variant: "destructive" });
-    } else {
-      toast("Enlace copiado al portapapeles!", {
-        description: `group/${group.ulid}`,
-      });
-      navigator.clipboard.writeText(`group/${group.ulid}`);
-    }
-  };
-
   const handleMemberKick = async () => {
     const { data, error } = await api.handleKickMember(group.ulid, memberKickId)
     if (data) {
@@ -115,8 +104,41 @@ const GroupPage = () => {
     setMemberOptionsDrawer(true);
   }
 
+  const canBrowserShareData = (data) => {
+    if (!navigator.share || !navigator.canShare) {
+      return false;
+    }
+    return navigator.canShare(data);
+  }
+
+
   if (!isLoggedIn) return (<Navigate to="/login" />);
   if (!environment) return (<Loader />);
+
+  const sharedDataSample = {
+    title: `${group?.owner.name} ${group?.owner.surname} te ha invitado a su grupo de Squad!`,
+    // text: "More text",
+    url: `https://squad.net.ar/group/${groupId}`,
+  };
+
+  const handleShareGroup = () => {
+    // if (!navigator.clipboard) {
+    //   toast("No se pudo copiar al portapapeles (No SSL Encryption HTTPS Error)", { variant: "destructive" });
+    // } else {
+    //   toast("Enlace copiado al portapapeles!", {
+    //     description: `group/${group.ulid}`,
+    //   });
+    //   navigator.clipboard.writeText(`group/${group.ulid}`);
+    // }
+
+    if (canBrowserShareData(sharedDataSample)) {
+      // Enable the share button in the UI.
+      renderAppSharingUI();
+    } else {
+      toast("Lo sentimos, ha ocurrido un error.", { variant: "destructive" });
+    }
+
+  };
 
   return (
     <>

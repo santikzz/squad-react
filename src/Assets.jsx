@@ -9,6 +9,9 @@ import logo1_white from "/static/squad-white-new.png";
 import logo2_black from "/static/squad-black-new.png";
 import logo2_gradient from "/static/squad-new.png";
 
+import logo_unicen from "/static/uniceng.png";
+import logo_exa from "/static/exa.png";
+
 const assets = {
     logo1_white,
     logo1_black,
@@ -19,6 +22,8 @@ const assets = {
     tuto,
     logo2_gradient,
     logo2_black,
+    logo_unicen,
+    logo_exa,
 }
 
 export default assets;

@@ -63,10 +63,10 @@ const ProfilePage = () => {
             <SheetHeader className="mt-32"></SheetHeader>
             <SheetFooter className="w-full">
 
-              <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5 font-satoshi-medium">
+              {/* <Button className="w-full bg-transparent outline outline-2 outline-red-500 text-red-500 flex gap-1.5 font-satoshi-medium">
                 <Flag size="16" />
                 Reportar usuario
-              </Button>
+              </Button> */}
             </SheetFooter>
           </>
         </SheetContent>
