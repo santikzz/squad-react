@@ -55,7 +55,7 @@ const LoginPage = () => {
           {/* <img src={assets.logo2_black} className="drop-shadow-md"></img> */}
         </div>
 
-        <div className="flex flex-col w-full gap-2 mt-4">
+        <div className="flex flex-col w-full gap-2 mt-4 z-20">
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label className="text-base flex flex-row items-center gap-1.5 font-satoshi-bold"><Mail size="16" /> Email</Label>
@@ -86,7 +86,7 @@ const LoginPage = () => {
         </div> */}
 
 
-        <div className="flex flex-col w-full gap-3 items-center mt-4">
+        <div className="flex flex-col w-full gap-3 items-center mt-4 z-20">
 
           <Button className={`w-full flex gap-1.5 text-base font-satoshi-bold bg-black ${loading ? "brightness-150" : null}`} onClick={handleLogin}>
             {!loading ? (
@@ -117,7 +117,7 @@ const LoginPage = () => {
 
 
 
-        <div className="fixed bottom-0 left-0 w-full flex flex-col items-center justify-center pb-4">
+        <div className="fixed bottom-0 left-0 w-full flex flex-col items-center justify-center pb-4 z-10">
           <div className="flex flex-row w-full justify-between px-6 mb-4">
             <img src={assets.logo_unicen} className="w-36 contrast-50" />
             <img src={assets.logo_exa} className="w-36 contrast-50" />

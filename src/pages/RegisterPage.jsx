@@ -92,7 +92,7 @@ const RegisterPage = () => {
       setRegisterSuccess(true);
     } else {
       if (error.code == 'email_already_taken') {
-        setErrorMessage(`Lo sentimos, ${formData.email} ya existe`);
+        setErrorMessage(`${formData.email} ya existe`);
         setShowError(true);
       }
       // console.log(error);
@@ -148,7 +148,7 @@ const RegisterPage = () => {
       <AlertDialog open={showError}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-satoshi-bold"></AlertDialogTitle>
+            <AlertDialogTitle className="font-satoshi-bold">Lo sentimos</AlertDialogTitle>
             <AlertDialogDescription className="font-satoshi-medium text-back text-lg">{errorMessage}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
