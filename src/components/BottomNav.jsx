@@ -2,9 +2,12 @@ import { Link } from "react-router-dom";
 import { UserRound, Bell, Compass, PlusCircle, UsersRound } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 import { useEffect, useState } from "react";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
-const BottomNav = ({ environment }) => {
+const BottomNav = () => {
     const [badges, setBadges] = useState(0);
+    const { environment } = useGlobalContext();
+
     useEffect(() => {
         try {
             setBadges(environment.notifications.badges);

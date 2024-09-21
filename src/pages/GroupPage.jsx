@@ -18,6 +18,7 @@ import { FormatTimeAgo } from "@/components/services/Utils";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { api } from "@/components/services/Api";
 import ButtonLoader from "@/components/ButtonLoader";
+import Wrapper from "@/components/Wrapper";
 
 const GroupPage = () => {
 
@@ -141,14 +142,9 @@ const GroupPage = () => {
   };
 
   return (
-    <>
+    <Wrapper>
+
       <Toaster />
-      <Navbar>
-        <Link to="/" className="active:brightness-75">
-          <ChevronLeft size="32" />
-        </Link>
-        <EllipsisVertical size="32" onClick={() => setOptionsNav(true)} />
-      </Navbar>
 
       {group && (group.isOwner || group.user.isMember) ? (
         <Sheet open={optionsNav} onOpenChange={setOptionsNav}>
@@ -226,10 +222,6 @@ const GroupPage = () => {
 
           <Drawer open={memberOptionsDrawer} onOpenChange={setMemberOptionsDrawer}>
             <DrawerContent>
-              {/* <DrawerHeader>
-                <DrawerTitle>¿Estas seguro que quieres eliminar este grupo?</DrawerTitle>
-                <DrawerDescription>Esta accion no se puede deshacer.</DrawerDescription>
-              </DrawerHeader> */}
               <DrawerFooter>
                 <Button className="bg-red-600 mb-10 font-satoshi-bold" onClick={() => handleMemberKick()}>
                   <X />Expulsar
@@ -243,126 +235,126 @@ const GroupPage = () => {
             </DrawerContent>
           </Drawer>
 
-          <div className="bg-black flex flex-col px-3 py-3 shadow-lg">
-            <div className="flex flex-row gap-3 items-center" onClick={() => navigate(`/user/${group.owner.ulid}`)}>
-              <Avatar className="w-16 h-16">
-                <AvatarImage src={api.API_URL + group.owner.avatar} alt="profile" />
-                <AvatarFallback>{group.owner.avatarFallback}</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col mt-0">
-                {/* <Label className="flex gap-1 items-center text-stone-400 text-xs font-satoshi-medium">
+
+          <div className="lg:m-6 lg:rounded-lg lg:shadow-md lg:border-[0.5px] lg:border-gray-300 lg:bg-white max-w-3xl">
+
+            <div className="bg-dark-200 flex flex-col px-3 py-3 shadow-lg lg:shadow-none lg:rounded-t-lg">
+              <div className="flex flex-row gap-3 items-center" onClick={() => navigate(`/user/${group.owner.ulid}`)}>
+                <Avatar className="w-16 h-16">
+                  <AvatarImage src={api.API_URL + group.owner.avatar} alt="profile" />
+                  <AvatarFallback>{group.owner.avatarFallback}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col mt-0">
+                  {/* <Label className="flex gap-1 items-center text-stone-400 text-xs font-satoshi-medium">
                   <Clock size="12" />
                   {FormatTimeAgo(group.creationDate)}
                 </Label> */}
-                <Label className="text-lg text-white font-satoshi-bold">
-                  {group.owner.name} {group.owner.surname}
-                </Label>
-                <Label className="text-stone-400 text-sm font-satoshi-medium">
-                  {group.facultad} - {group.carrera}
-                </Label>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start mt-2 p-3 gap-1">
-              <Label className="flex gap-1 items-center text-stone-400 text-sm font-satoshi-medium">
-                <Clock size="12" />
-                {FormatTimeAgo(group.creationDate)}
-              </Label>
-              <Label className="text-white text-xl font-satoshi-bold">{group.title}</Label>
-            </div>
-          </div>
-
-          <div className="flex flex-col pt-4 px-4 gap-4 mb-4">
-            <div className="flex flex-row gap-2 justify-between">
-              <div className="flex flex-row gap-2">
-                <div className="flex flex-row items-center bg-gradient rounded-lg py-2 px-3 text-stone-100 gap-1.5 shadow-sm">
-                  {group.privacy == "open" ? <LockOpen size="18" strokeWidth="2" color="white"></LockOpen> : <Lock size="18" strokeWidth="2" color="white"></Lock>}
-                  <Label className="text-base font-satoshi-bold">Grupo {group.privacy == "open" ? "abierto" : "cerrado"}</Label>
-                </div>
-                <div className="flex flex-row items-center bg-gradient rounded-lg py-2 px-3 text-stone-100 gap-1.5 shadow-sm">
-                  <Users size="20" strokeWidth="2" color="white"></Users>
-                  <Label className="text-base font-satoshi-bold">
-                    {group.membersCount}
-                    {group.maxMembers != null ? ` / ` + group.maxMembers : ""}
+                  <Label className="text-lg text-white font-satoshi-bold">
+                    {group.owner.name} {group.owner.surname}
+                  </Label>
+                  <Label className="text-stone-400 text-sm font-satoshi-medium">
+                    {group.facultad} - {group.carrera}
                   </Label>
                 </div>
               </div>
-              <button className="bg-transparent text-black active:text-stone-500 px-2" onClick={() => handleShareGroup()}>
-                <Share2 />
-              </button>
+
+              <div className="flex flex-col items-start mt-2 p-3 gap-1">
+                <Label className="flex gap-1 items-center text-stone-400 text-sm font-satoshi-medium">
+                  <Clock size="12" />
+                  {FormatTimeAgo(group.creationDate)}
+                </Label>
+                <Label className="text-white text-xl font-satoshi-bold">{group.title}</Label>
+              </div>
             </div>
 
-            <div className="flex flex-col py-2">
-              {/* <Label className="text-lg font-satoshi-bold">Descripcion</Label> */}
-              {/* <Card className="min-h-24 flex p-4 bg-stone-50 font-satoshi-medium shadow-sm">{group.description}</Card> */}
-              <label className="text-base font-satoshi-medium text-black">{group.description}</label>
-            </div>
-
-            <div className="flex flex-col">
-              {/* {(isFull = group.maxMembers != null && group.membersCount >= group.maxMembers)}} */}
-
-              {(!group.isOwner && !group.user.isMember) ? (
-
-                group.maxMembers != null && group.membersCount >= group.maxMembers ? (
-                  <ButtonLoader disabled={true}>
-                    <Ban /> Grupo lleno
-                  </ButtonLoader>
-                ) : group.user.hasJoinRequest ? (
-                  <ButtonLoader onClick={handleJoinGroup} isLoading={loading}>
-                    <X /> Cancelar solicitud
-                  </ButtonLoader>
-                ) : !group.user.isMember ? (
-                  <ButtonLoader onClick={handleJoinGroup} isLoading={loading}>
-                    <Forward /> {group.privacy == "closed" ? "Solicitar unirse" : "Unirse"}
-                  </ButtonLoader>
-                ) : null
-
-              ) : null}
-
-              {group.isOwner || group.user.isMember ? (
-                <Button className="bg-gradient active:brightness-75 h-12 min-h-12 shadow-sm flex flex-row gap-1" onClick={() => navigate(`/group/chat/${group.ulid}`)}>
-                  <MessageCircle />
-                  <Label className="text-white text-base font-satoshi-bold">Abrir chat</Label>
-                </Button>
-              ) : null}
-            </div>
-
-            <div className="mt-4">
-              {group.members.length > 0 ? (
-                <Label className="font-satoshi-bold text-lg">Miembros</Label>
-              ) : null}
-            </div>
-
-            <div className="flex flex-col gap-4">
-              {group.members.map((member, idx) => (
-                <div key={member.ulid} className="flex bg-white">
-                  <div className="flex flex-row items-center justify-between w-full">
-                    <div className="flex flex-row gap-2" onClick={() => navigate(`/user/${member.ulid}`)}>
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={api.API_URL + member.avatar} alt="profile" />
-                        <AvatarFallback>{member.avatarFallback}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col justify-center mt-0">
-                        <Label className="text-base text-stone-900 font-satoshi-medium">
-                          {member.name} {member.surname}
-                        </Label>
-                      </div>
-                    </div>
-                    {group.isOwner ? (
-                      <div className="p-2" onClick={() => openMemberOptionsDrawer(member.ulid)}>
-                        <EllipsisVertical />
-                      </div>
-                    ) : null}
+            <div className="flex flex-col pt-4 px-4 gap-4 mb-4">
+              <div className="flex flex-row gap-2 justify-between">
+                <div className="flex flex-row gap-2">
+                  <div className="flex flex-row items-center bg-gradient rounded-lg py-2 px-3 text-stone-100 gap-1.5 shadow-sm">
+                    {group.privacy == "open" ? <LockOpen size="18" strokeWidth="2" color="white"></LockOpen> : <Lock size="18" strokeWidth="2" color="white"></Lock>}
+                    <Label className="text-base font-satoshi-bold">Grupo {group.privacy == "open" ? "abierto" : "cerrado"}</Label>
+                  </div>
+                  <div className="flex flex-row items-center bg-gradient rounded-lg py-2 px-3 text-stone-100 gap-1.5 shadow-sm">
+                    <Users size="20" strokeWidth="2" color="white"></Users>
+                    <Label className="text-base font-satoshi-bold">
+                      {group.membersCount}
+                      {group.maxMembers != null ? ` / ` + group.maxMembers : ""}
+                    </Label>
                   </div>
                 </div>
-              ))}
-            </div>
+                <button className="bg-transparent text-black active:text-stone-500 px-2" onClick={() => handleShareGroup()}>
+                  <Share2 />
+                </button>
+              </div>
 
+              <div className="flex flex-col py-2">
+                <label className="text-base font-satoshi-medium text-black">{group.description}</label>
+              </div>
+
+              <div className="flex flex-col">
+
+                {(!group.isOwner && !group.user.isMember) ? (
+
+                  group.maxMembers != null && group.membersCount >= group.maxMembers ? (
+                    <ButtonLoader disabled={true}>
+                      <Ban /> Grupo lleno
+                    </ButtonLoader>
+                  ) : group.user.hasJoinRequest ? (
+                    <ButtonLoader onClick={handleJoinGroup} isLoading={loading}>
+                      <X /> Cancelar solicitud
+                    </ButtonLoader>
+                  ) : !group.user.isMember ? (
+                    <ButtonLoader onClick={handleJoinGroup} isLoading={loading}>
+                      <Forward /> {group.privacy == "closed" ? "Solicitar unirse" : "Unirse"}
+                    </ButtonLoader>
+                  ) : null
+
+                ) : null}
+
+                {group.isOwner || group.user.isMember ? (
+                  <Button className="bg-gradient active:brightness-75 h-12 min-h-12 shadow-sm flex flex-row gap-1" onClick={() => navigate(`/group/chat/${group.ulid}`)}>
+                    <MessageCircle />
+                    <Label className="text-white text-base font-satoshi-bold">Abrir chat</Label>
+                  </Button>
+                ) : null}
+              </div>
+
+              <div className="mt-4">
+                {group.members.length > 0 ? (
+                  <Label className="font-satoshi-bold text-lg">Miembros</Label>
+                ) : null}
+              </div>
+
+              <div className="flex flex-col gap-4">
+                {group.members.map((member, idx) => (
+                  <div key={member.ulid} className="flex">
+                    <div className="flex flex-row items-center justify-between w-full">
+                      <div className="flex flex-row gap-2" onClick={() => navigate(`/user/${member.ulid}`)}>
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={api.API_URL + member.avatar} alt="profile" />
+                          <AvatarFallback>{member.avatarFallback}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col justify-center mt-0">
+                          <Label className="text-base text-stone-900 font-satoshi-medium">
+                            {member.name} {member.surname}
+                          </Label>
+                        </div>
+                      </div>
+                      {group.isOwner ? (
+                        <div className="p-2" onClick={() => openMemberOptionsDrawer(member.ulid)}>
+                          <EllipsisVertical />
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
           </div>
         </div>
       ) : null}
-      <BottomNav environment={environment}></BottomNav>
-    </>
+    </Wrapper>
   );
 };
 

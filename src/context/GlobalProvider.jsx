@@ -17,6 +17,13 @@ const GlobalProvider = ({ children }) => {
 
     const [loading, setLoading] = useState(true);
 
+    const fetchEnvironment = async () => {
+        const { data, error } = await api.fetchEnvironment()
+        if (data) {
+            setEnvironment(data);
+        }
+    }
+
     useEffect(() => {
 
         if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -34,6 +41,8 @@ const GlobalProvider = ({ children }) => {
         }
 
         setLoading(false);
+
+        fetchEnvironment();
 
     }, []);
 

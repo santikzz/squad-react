@@ -25,18 +25,18 @@ const OptionSwitch = ({ value, onChange, optionA, optionB }) => {
             <button
                 type="button"
                 onClick={selectOptionA}
-                className={`z-10 py-2 px-6 flex-1 transition-text duration-200 ease-in-out ${option ? 'text-white' : null}`}
+                className={`z-20 py-2 px-6 flex-1 transition-text duration-200 ease-in-out ${option ? 'text-white' : null}`}
             >
                 <label className='font-satoshi-medium text-base'>Abierto</label>
             </button>
             <button
                 type="button"
                 onClick={selectOptionB}
-                className={`z-10 py-2 px-6 flex-1 transition-text duration-200 ease-in-out ${!option ? 'text-white' : null}`}
+                className={`z-20 py-2 px-6 flex-1 transition-text duration-200 ease-in-out ${!option ? 'text-white' : null}`}
             >
                 <label className='font-satoshi-medium text-base'>Cerrado</label>
             </button>
-            <div className={`absolute ${option ? 'left-0' : 'translate-x-full'} bottom-0 h-full w-[50%] rounded-md bg-gradient flex-1 -z-10 transition-all duration-200 ease-in-out`} />
+            <div className={`absolute ${option ? 'left-0' : 'translate-x-full'} bottom-0 h-full w-[50%] rounded-md bg-gradient flex-1 z-10 transition-all duration-200 ease-in-out`} />
         </div>
     );
 }

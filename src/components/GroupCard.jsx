@@ -8,14 +8,14 @@ import { Lock, LockOpen, Clock, Users } from "lucide-react";
 import { FormatTimeAgo, trimString } from "@/components/services/Utils";
 import { api } from "./services/Api";
 
-const GroupCard = ({ group }) => {
+const GroupCard = ({ group, className }) => {
 
     const navigate = useNavigate();
 
     return (
 
         <Card
-            className="w-full lg:max-h-[20rem] shadow-md border-[0.5px] border-gray-300 bg-white active:brightness-95 flex flex-col rounded-xl"
+            className={`w-full shadow-md border-[0.5px] border-gray-300 bg-white active:brightness-95 flex flex-col rounded-lg ${className}`}
             onClick={() => navigate(`/group/${group?.ulid}`)}
         >
 

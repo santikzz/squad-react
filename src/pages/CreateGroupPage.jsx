@@ -22,6 +22,8 @@ import assets from "@/Assets";
 import InputNumber from "@/components/InputNumber";
 import OptionSwitch from "@/components/OptionSwitch";
 import ButtonLoader from "@/components/ButtonLoader";
+import Wrapper from "@/components/Wrapper";
+import CreateGroupCard from "@/components/CreateGroupCard";
 
 const FormSchema = z.object({
   title: z
@@ -91,125 +93,12 @@ const CreateGroupPage = () => {
   if (!isLoggedIn) return (<Navigate to="/login" />);
 
   return (
-    <>
-      <Navbar>
-        <Link to="/" className="active:brightness-75">
-          <ChevronLeft size="32" />
-        </Link>
-      </Navbar>
-
-      {!environment ? (<Loader />) : (
-        <>
-          <div className="w-full flex justify-center pt-5">
-            <Label className="text-2xl font-satoshi-bold">Nuevo grupo</Label>
-          </div>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 gap-4 lg:mx-[33%]">
-              <div className="grid w-full items-center gap-1.5">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-satoshi-bold text-base">Titulo</FormLabel>
-                      <FormControl>
-                        <Input className="font-satoshi-medium text-base" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid w-full items-center gap-1.5">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-satoshi-bold text-base">Descripcion</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="busco grupo de estudio para..." className="resize-none font-satoshi-medium text-base" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid w-full items-center gap-1.5">
-                <FormField
-                  control={form.control}
-                  name="privacy"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-satoshi-bold text-base">Privacidad</FormLabel>
-                      <FormControl>
-                        <Controller
-                          name="privacy"
-                          control={form.control}
-                          render={({ field }) => (
-                            <OptionSwitch
-                              value={field.value}
-                              onChange={field.onChange}
-                              optionA='open'
-                              optionB='closed'
-                            />
-                          )}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* <OptionSwitch></OptionSwitch> */}
-              {/* <div className="flex items-center space-x-2">
-                <Switch checked={memberLimitChecked} onCheckedChange={setMemberLimitChecked} />
-                <Label>Limitar miembros</Label>
-              </div> */}
-
-              <div className={`grid w-full items-center gap-1.5 `}>
-                <FormField
-                  control={form.control}
-                  name="maxMembers"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-satoshi-bold text-base">Limite de miembros</FormLabel>
-                      <FormControl>
-                        <Controller
-                          name="maxMembers"
-                          control={form.control}
-                          render={({ field }) => (
-                            <InputNumber
-                              value={field.value}
-                              onChange={field.onChange}
-                              min={0}
-                              max={20}
-                            />
-                          )}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="w-full mt-16">
-
-                <ButtonLoader isLoading={creating} type="submit">
-                  <Plus /> Crear
-                </ButtonLoader>
-
-              </div>
-            </form>
-          </Form>
-        </>)}
-      <BottomNav environment={environment}></BottomNav>
-    </>
+    <Wrapper>
+      <div className="w-full flex justify-center pt-5">
+        <Label className="text-2xl font-satoshi-bold">Nuevo grupo</Label>
+      </div>
+      <CreateGroupCard />
+    </Wrapper>
   );
 };
 
