@@ -80,7 +80,7 @@ const HomePage = () => {
     <Wrapper>
       <div className="flex justify-between h-full">
 
-        <div className="w-full mx-64 space-y-4 p-4">
+        <div className="lg:w-full lg:mx-64 space-y-4 p-4">
           {groups.map((group, idx) => (
             <GroupCard group={group} key={idx} className="w-full"/>
           ))}
